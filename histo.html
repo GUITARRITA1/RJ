@@ -18,30 +18,22 @@
 
 
 
-  <a href="histo.html">
-<button>Consultar Stock</button>
-</a>
-
-<br><br>
-
-  
-
 <hr>
 
-// <h2>Historial de Movimientos</h2>
-// <table border="1" id="tablaMovimientos">
-// <tr>
-// <th>Código</th>
-// <th>Material</th>
-// <th>Dimensional</th>
-// <th>Tipo</th>
-// <th>Cantidad</th>
-// <th>Responsable</th>
-// <th>Cliente / Proveedor</th>
-// <th>Fecha / Hora</th>
-// <th>Acción</th>
-// </tr>
-// </table>
+<h2>Historial de Movimientos</h2>
+<table border="1" id="tablaMovimientos">
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Dimensional</th>
+<th>Tipo</th>
+<th>Cantidad</th>
+<th>Responsable</th>
+<th>Cliente / Proveedor</th>
+<th>Fecha / Hora</th>
+<th>Acción</th>
+</tr>
+</table>
 
 
   <hr>
@@ -82,7 +74,7 @@ function cargarHistorial() {
         `
         tabla.appendChild(fila)
     })
-}
+
 
 function borrarMovimiento(index) {
     if (confirm("¿Desea borrar este movimiento?")) {
