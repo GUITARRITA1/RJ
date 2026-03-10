@@ -43,8 +43,9 @@
 // </tr>
 // </table>
 
-<script>
 
+  <hr>
+<script>
 
 // ================== FUNCIONES PARA HISTORIAL ==================
 
@@ -53,7 +54,7 @@ function cargarHistorial() {
     let materiales = JSON.parse(localStorage.getItem("materiales")) || []
     let tabla = document.getElementById("tablaMovimientos")
     tabla.innerHTML = `
-    <tr>
+        <tr>
         <th>Código</th>
         <th>Material</th>
         <th>Dimensional</th>
@@ -63,7 +64,7 @@ function cargarHistorial() {
         <th>Cliente / Proveedor</th>
         <th>Fecha / Hora</th>
         <th>Acción</th>
-    </tr>
+        </tr>
     `
     movimientos.forEach((m, index) => {
         let mat = materiales.find(x => x.codigo == m.codigo)
