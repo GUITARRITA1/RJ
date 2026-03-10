@@ -35,9 +35,10 @@
 </tr>
 </table>
 
-
   <hr>
-<script>
+
+  
+  <script>
 
 // ================== FUNCIONES PARA HISTORIAL ==================
 
@@ -57,7 +58,8 @@ function cargarHistorial() {
         <th>Fecha / Hora</th>
         <th>Acción</th>
         </tr>
-    `
+    <hr>
+    
     movimientos.forEach((m, index) => {
         let mat = materiales.find(x => x.codigo == m.codigo)
         let fila = document.createElement("tr")
