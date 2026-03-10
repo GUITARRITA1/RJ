@@ -1,0 +1,103 @@
+<div style="text-align:center; margin-bottom:20px;">
+  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; height:auto;">
+</div>
+
+<div style="text-align:RIGHT; margin-bottom:20px;">
+  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; height:auto;">
+</div>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Movimiento de Material</title>
+</head>
+
+<body>
+
+<h2>Entrada / Salida de Material</h2>
+
+Material
+<input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
+<datalist id="materialesList">
+<!-- Opciones cargadas desde JS -->
+</datalist>
+
+<br><br>
+
+Tipo
+<select id="tipo">
+<option value="entrada">Entrada</option>
+<option value="salida">Salida</option>
+</select>
+
+<br><br>
+
+Cantidad
+<input type="number" id="cantidad">
+
+<br><br>
+
+Responsable
+<input id="responsable">
+
+<br><br>
+
+Cliente / Proveedor
+<input id="cliente">
+
+<br><br>
+
+<button onclick="guardar()">Guardar</button>
+
+<script>
+
+// Cargar materiales en el datalist
+function cargarMateriales() {
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let datalist = document.getElementById("materialesList")
+    datalist.innerHTML = ""
+
+    materiales.forEach(m => {
+        let opcion = document.createElement("option")
+        opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
+        datalist.appendChild(opcion)
+    })
+}
+
+// Guardar movimiento
+function guardar() {
+    let input = document.getElementById("codigo").value
+
+    // Extraer solo el código (antes del primer " - ")
+    let codigo = input.split(" - ")[0]
+
+    if(!codigo) {
+        alert("Selecciona un material válido de la lista")
+        return
+    }
+
+    let movimiento = {
+        codigo: codigo,
+        tipo: document.getElementById("tipo").value,
+        cantidad: parseInt(document.getElementById("cantidad").value),
+        responsable: document.getElementById("responsable").value,
+        cliente: document.getElementById("cliente").value, // NUEVO CAMPO
+        fecha: new Date().toLocaleString()
+    }
+
+    let datos = JSON.parse(localStorage.getItem("movimientos")) || []
+    datos.push(movimiento)
+    localStorage.setItem("movimientos", JSON.stringify(datos))
+
+    alert("Movimiento guardado")
+}
+
+// Cargar materiales al abrir la página
+cargarMateriales()
+
+</script>
+
+</body>
+
+</html>

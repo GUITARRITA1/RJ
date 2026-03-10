@@ -1,0 +1,193 @@
+<div style="text-align:center; margin-bottom:20px;">
+  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; height:auto;">
+</div>
+
+<div style="text-align:RIGHT; margin-bottom:20px;">
+  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; height:auto;">
+</div>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Administrador - Inventario</title>
+</head>
+
+<body>
+
+<h2>Alta de Material</h2>
+
+Material
+<input id="material"><br><br>
+
+Rubro
+<input id="rubro"><br><br>
+
+Subclasificación
+<input id="sub"><br><br>
+
+Dimensional
+<input id="dimensional"><br><br>
+
+Descripción adicional
+<input id="descripcion"><br><br>
+
+<button onclick="agregarMaterial()">Guardar Material</button>
+
+<hr>
+
+<h2>Lista de Materiales</h2>
+<table border="1" id="tablaMateriales">
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Rubro</th>
+<th>Subclasificación</th>
+<th>Dimensional</th>
+<th>Descripción</th>
+</tr>
+</table>
+
+<hr>
+
+<h2>Historial de Movimientos</h2>
+<table border="1" id="tablaMovimientos">
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Dimensional</th>
+<th>Tipo</th>
+<th>Cantidad</th>
+<th>Responsable</th>
+<th>Cliente / Proveedor</th>
+<th>Fecha / Hora</th>
+<th>Acción</th>
+</tr>
+</table>
+
+<script>
+// ================== FUNCIONES PARA MATERIALES ==================
+
+function generarCodigo(rubro, sub) {
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let prefijo = rubro.substring(0, 2).toUpperCase() + sub.substring(0, 2).toUpperCase()
+    let contador = 1
+    materiales.forEach(m => {
+        if (m.codigo.startsWith(prefijo)) contador++
+    })
+    let numero = contador.toString().padStart(6, "0")
+    return prefijo + numero
+}
+
+function agregarMaterial() {
+    let material = document.getElementById("material").value
+    let rubro = document.getElementById("rubro").value
+    let sub = document.getElementById("sub").value
+    let dimensional = document.getElementById("dimensional").value
+    let descripcion = document.getElementById("descripcion").value
+
+    if (!material || !rubro || !sub) {
+        alert("Material, Rubro y Subclasificación son obligatorios")
+        return
+    }
+
+    let codigo = generarCodigo(rubro, sub)
+
+    let nuevo = {
+        codigo: codigo,
+        material: material,
+        rubro: rubro,
+        sub: sub,
+        dimensional: dimensional,
+        descripcion: descripcion
+    }
+
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    materiales.push(nuevo)
+    localStorage.setItem("materiales", JSON.stringify(materiales))
+
+    alert("Material guardado con código: " + codigo)
+    mostrarMateriales()
+}
+
+function mostrarMateriales() {
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let tabla = document.getElementById("tablaMateriales")
+    tabla.innerHTML = `
+    <tr>
+    <th>Código</th>
+    <th>Material</th>
+    <th>Rubro</th>
+    <th>Subclasificación</th>
+    <th>Dimensional</th>
+    <th>Descripción</th>
+    </tr>
+    `
+    materiales.forEach(m => {
+        let fila = document.createElement("tr")
+        fila.innerHTML = `
+        <td>${m.codigo}</td>
+        <td>${m.material}</td>
+        <td>${m.rubro}</td>
+        <td>${m.sub}</td>
+        <td>${m.dimensional}</td>
+        <td>${m.descripcion}</td>
+        `
+        tabla.appendChild(fila)
+    })
+}
+
+// ================== FUNCIONES PARA HISTORIAL ==================
+
+function cargarHistorial() {
+    let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let tabla = document.getElementById("tablaMovimientos")
+    tabla.innerHTML = `
+    <tr>
+        <th>Código</th>
+        <th>Material</th>
+        <th>Dimensional</th>
+        <th>Tipo</th>
+        <th>Cantidad</th>
+        <th>Responsable</th>
+        <th>Cliente / Proveedor</th>
+        <th>Fecha / Hora</th>
+        <th>Acción</th>
+    </tr>
+    `
+    movimientos.forEach((m, index) => {
+        let mat = materiales.find(x => x.codigo == m.codigo)
+        let fila = document.createElement("tr")
+        fila.innerHTML = `
+        <td>${m.codigo}</td>
+        <td>${mat ? mat.material : ""}</td>
+        <td>${mat ? mat.dimensional : ""}</td>
+        <td>${m.tipo}</td>
+        <td>${m.cantidad}</td>
+        <td>${m.responsable}</td>
+        <td>${m.cliente || ""}</td>
+        <td>${m.fecha}</td>
+        <td><button onclick="borrarMovimiento(${index})">Borrar</button></td>
+        `
+        tabla.appendChild(fila)
+    })
+}
+
+function borrarMovimiento(index) {
+    if (confirm("¿Desea borrar este movimiento?")) {
+        let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
+        movimientos.splice(index, 1)
+        localStorage.setItem("movimientos", JSON.stringify(movimientos))
+        cargarHistorial()
+    }
+}
+
+// ================== INICIALIZACIÓN ==================
+mostrarMateriales()
+cargarHistorial()
+</script>
+
+</body>
+
+</html>
