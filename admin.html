@@ -36,6 +36,13 @@ Descripción adicional
 
 <hr>
 
+  <a href="histo.html">
+<button>Consultar Stock</button>
+</a>
+
+<br><br>
+
+  
 <h2>Lista de Materiales</h2>
 <table border="1" id="tablaMateriales">
 <tr>
@@ -49,21 +56,6 @@ Descripción adicional
 </table>
 
 <hr>
-
-// <h2>Historial de Movimientos</h2>
-// <table border="1" id="tablaMovimientos">
-// <tr>
-// <th>Código</th>
-// <th>Material</th>
-// <th>Dimensional</th>
-// <th>Tipo</th>
-// <th>Cantidad</th>
-// <th>Responsable</th>
-// <th>Cliente / Proveedor</th>
-// <th>Fecha / Hora</th>
-// <th>Acción</th>
-// </tr>
-// </table>
 
 <script>
 // ================== FUNCIONES PARA MATERIALES ==================
@@ -137,51 +129,7 @@ function mostrarMateriales() {
     })
 }
 
-// ================== FUNCIONES PARA HISTORIAL ==================
 
-function cargarHistorial() {
-    let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
-    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
-    let tabla = document.getElementById("tablaMovimientos")
-    tabla.innerHTML = `
-    <tr>
-        <th>Código</th>
-        <th>Material</th>
-        <th>Dimensional</th>
-        <th>Tipo</th>
-        <th>Cantidad</th>
-        <th>Responsable</th>
-        <th>Cliente / Proveedor</th>
-        <th>Fecha / Hora</th>
-        <th>Acción</th>
-    </tr>
-    `
-    movimientos.forEach((m, index) => {
-        let mat = materiales.find(x => x.codigo == m.codigo)
-        let fila = document.createElement("tr")
-        fila.innerHTML = `
-        <td>${m.codigo}</td>
-        <td>${mat ? mat.material : ""}</td>
-        <td>${mat ? mat.dimensional : ""}</td>
-        <td>${m.tipo}</td>
-        <td>${m.cantidad}</td>
-        <td>${m.responsable}</td>
-        <td>${m.cliente || ""}</td>
-        <td>${m.fecha}</td>
-        <td><button onclick="borrarMovimiento(${index})">Borrar</button></td>
-        `
-        tabla.appendChild(fila)
-    })
-}
-
-function borrarMovimiento(index) {
-    if (confirm("¿Desea borrar este movimiento?")) {
-        let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
-        movimientos.splice(index, 1)
-        localStorage.setItem("movimientos", JSON.stringify(movimientos))
-        cargarHistorial()
-    }
-}
 
 // ================== INICIALIZACIÓN ==================
 mostrarMateriales()
@@ -192,4 +140,5 @@ cargarHistorial()
 
 
 </html>
+
 
