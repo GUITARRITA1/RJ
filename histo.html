@@ -1,11 +1,3 @@
-<div style="text-align:center; margin-bottom:30px;">
-  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
-</div>
-
-<div style="text-align:RIGHT; margin-bottom:30px;">
-  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:600px; height:auto;">
-</div>
-
 <!DOCTYPE html>
 <html>
 
@@ -15,12 +7,18 @@
 
 <body>
 
+<div style="text-align:center; margin-bottom:30px;">
+  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+</div>
 
-
+<div style="text-align:right; margin-bottom:30px;">
+  <img src="INGE.jpg" alt="INGE" style="max-width:600px; height:auto;">
+</div>
 
 <hr>
 
 <h2>Historial de Movimientos</h2>
+
 <table border="1" id="tablaMovimientos">
 <tr>
 <th>Código</th>
@@ -35,19 +33,19 @@
 </tr>
 </table>
 
-  <hr>
+<hr>
 
-  
-  <script>
-
-// ================== FUNCIONES PARA HISTORIAL ==================
+<script>
 
 function cargarHistorial() {
+
     let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
     let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+
     let tabla = document.getElementById("tablaMovimientos")
+
     tabla.innerHTML = `
-        <tr>
+    <tr>
         <th>Código</th>
         <th>Material</th>
         <th>Dimensional</th>
@@ -57,12 +55,15 @@ function cargarHistorial() {
         <th>Cliente / Proveedor</th>
         <th>Fecha / Hora</th>
         <th>Acción</th>
-        </tr>
-    <hr>
-    
+    </tr>
+    `
+
     movimientos.forEach((m, index) => {
+
         let mat = materiales.find(x => x.codigo == m.codigo)
+
         let fila = document.createElement("tr")
+
         fila.innerHTML = `
         <td>${m.codigo}</td>
         <td>${mat ? mat.material : ""}</td>
@@ -74,15 +75,29 @@ function cargarHistorial() {
         <td>${m.fecha}</td>
         <td><button onclick="borrarMovimiento(${index})">Borrar</button></td>
         `
-        tabla.appendChild(fila)
-    })
 
+        tabla.appendChild(fila)
+
+    })
+}
 
 function borrarMovimiento(index) {
+
     if (confirm("¿Desea borrar este movimiento?")) {
+
         let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
+
         movimientos.splice(index, 1)
+
         localStorage.setItem("movimientos", JSON.stringify(movimientos))
+
         cargarHistorial()
     }
 }
+
+cargarHistorial()
+
+</script>
+
+</body>
+</html>
