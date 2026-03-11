@@ -103,31 +103,129 @@ cargarMateriales()
 </html>
 
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
 
-const supabase = Supabase.createClient(
+const supabase = supabase.createClient(
 "https://vlvfbckdqemjghphefnx.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"
+"TU_ANON_KEY"
 );
 
-async function guardar(id,material,tipo,tipo,cantidad,fecha){
+// Cargar materiales
+function cargarMateriales() {
 
-await supabase
-.from("movimientos")
-.insert([{id:id,material:material,tipo:tipo,cantidad:cantidad,fecha:fecha}]);
+let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+let datalist = document.getElementById("materialesList")
 
-alert("Movimiento guardado");
+datalist.innerHTML=""
+
+materiales.forEach(m=>{
+let opcion=document.createElement("option")
+opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
+datalist.appendChild(opcion)
+})
 
 }
 
-</script>
+// Guardar movimiento en Supabase
+async function guardar(){
 
+let input=document.getElementById("codigo").value
+let codigo=input.split(" - ")[0]
 
+if(!codigo){
+alert("Selecciona un material válido")
+return
+}
 
+let tipo=document.getElementById("tipo").value
+let cantidad=parseInt(document.getElementById("cantidad").value)
+let responsable=document.getElementById("responsable").value
+let cliente=document.getElementById("cliente").value
 
+const { data, error } = await supabase
+.from("movimientos")
+.insert([
+{
+codigo:codigo,
+tipo:tipo,
+cantidad:cantidad,
+responsable:responsable,
+cliente:cliente
+}
+])
 
+if(error){
+console.log(error)
+alert("Error al guardar")
+}else{
+alert("Movimiento guardado")
+}
 
+}
+
+cargarMateriales()
+
+</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabase = supabase.createClient(
+"https://vlvfbckdqemjghphefnx.supabase.co",
+"TU_ANON_KEY"
+);
+
+// Cargar materiales
+function cargarMateriales() {
+
+let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+let datalist = document.getElementById("materialesList")
+
+datalist.innerHTML=""
+
+materiales.forEach(m=>{
+let opcion=document.createElement("option")
+opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
+datalist.appendChild(opcion)
+})
+
+}
+
+// Guardar movimiento en Supabase
+async function guardar(){
+
+let input=document.getElementById("codigo").value
+let codigo=input.split(" - ")[0]
+
+if(!codigo){
+alert("Selecciona un material válido")
+return
+}
+
+let tipo=document.getElementById("tipo").value
+let cantidad=parseInt(document.getElementById("cantidad").value)
+let responsable=document.getElementById("responsable").value
+let cliente=document.getElementById("cliente").value
+
+const { data, error } = await supabase
+.from("movimientos")
+.insert([
+{
+codigo:codigo,
+tipo:tipo,
+cantidad:cantidad,
+responsable:responsable,
+cliente:cliente
+}
+])
+
+if(error){
+console.log(error)
+alert("Error al guardar")
+}else{
+alert("Movimiento guardado")
+}
+
+}
 
