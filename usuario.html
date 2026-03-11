@@ -1,13 +1,5 @@
-
 <!DOCTYPE html>
 <html>
-<div style="text-align:center; margin-bottom:20px;">
-  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; height:auto;">
-</div>
-
-<div style="text-align:RIGHT; margin-bottom:20px;">
-  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; height:auto;">
-</div>
 
 <head>
 <title>Movimiento de Material</title>
@@ -15,13 +7,19 @@
 
 <body>
 
+<div style="text-align:center; margin-bottom:20px;">
+<img src="RJ.jpg" style="max-width:300px;">
+</div>
+
+<div style="text-align:right; margin-bottom:20px;">
+<img src="INGE.jpg" style="max-width:300px;">
+</div>
+
 <h2>Entrada / Salida de Material</h2>
 
 Material
 <input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
-<datalist id="materialesList">
-<!-- Opciones cargadas desde JS -->
-</datalist>
+<datalist id="materialesList"></datalist>
 
 <br><br>
 
@@ -50,59 +48,6 @@ Cliente / Proveedor
 
 <button onclick="guardar()">Guardar</button>
 
-<script>
-
-// Cargar materiales en el datalist
-function cargarMateriales() {
-    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
-    let datalist = document.getElementById("materialesList")
-    datalist.innerHTML = ""
-
-    materiales.forEach(m => {
-        let opcion = document.createElement("option")
-        opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
-        datalist.appendChild(opcion)
-    })
-}
-
-// Guardar movimiento
-function guardar() {
-    let input = document.getElementById("codigo").value
-
-    // Extraer solo el código (antes del primer " - ")
-    let codigo = input.split(" - ")[0]
-
-    if(!codigo) {
-        alert("Selecciona un material válido de la lista")
-        return
-    }
-
-    let movimiento = {
-        codigo: codigo,
-        tipo: document.getElementById("tipo").value,
-        cantidad: parseInt(document.getElementById("cantidad").value),
-        responsable: document.getElementById("responsable").value,
-        cliente: document.getElementById("cliente").value, // NUEVO CAMPO
-        fecha: new Date().toLocaleString()
-    }
-
-    let datos = JSON.parse(localStorage.getItem("movimientos")) || []
-    datos.push(movimiento)
-    localStorage.setItem("movimientos", JSON.stringify(datos))
-
-    alert("Movimiento guardado")
-}
-
-// Cargar materiales al abrir la página
-cargarMateriales()
-
-</script>
-
-</body>
-
-</html>
-
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
@@ -112,8 +57,8 @@ const supabase = supabase.createClient(
 "TU_ANON_KEY"
 );
 
-// Cargar materiales
-function cargarMateriales() {
+// cargar materiales desde localStorage
+function cargarMateriales(){
 
 let materiales = JSON.parse(localStorage.getItem("materiales")) || []
 let datalist = document.getElementById("materialesList")
@@ -128,7 +73,7 @@ datalist.appendChild(opcion)
 
 }
 
-// Guardar movimiento en Supabase
+// guardar movimiento en Supabase
 async function guardar(){
 
 let input=document.getElementById("codigo").value
@@ -167,65 +112,7 @@ alert("Movimiento guardado")
 
 cargarMateriales()
 
-</script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</script>
 
-<script>
-
-const supabase = supabase.createClient(
-"https://vlvfbckdqemjghphefnx.supabase.co",
-"TU_ANON_KEY"
-);
-
-// Cargar materiales
-function cargarMateriales() {
-
-let materiales = JSON.parse(localStorage.getItem("materiales")) || []
-let datalist = document.getElementById("materialesList")
-
-datalist.innerHTML=""
-
-materiales.forEach(m=>{
-let opcion=document.createElement("option")
-opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
-datalist.appendChild(opcion)
-})
-
-}
-
-// Guardar movimiento en Supabase
-async function guardar(){
-
-let input=document.getElementById("codigo").value
-let codigo=input.split(" - ")[0]
-
-if(!codigo){
-alert("Selecciona un material válido")
-return
-}
-
-let tipo=document.getElementById("tipo").value
-let cantidad=parseInt(document.getElementById("cantidad").value)
-let responsable=document.getElementById("responsable").value
-let cliente=document.getElementById("cliente").value
-
-const { data, error } = await supabase
-.from("movimientos")
-.insert([
-{
-codigo:codigo,
-tipo:tipo,
-cantidad:cantidad,
-responsable:responsable,
-cliente:cliente
-}
-])
-
-if(error){
-console.log(error)
-alert("Error al guardar")
-}else{
-alert("Movimiento guardado")
-}
-
-}
-
+</body>
+</html>
