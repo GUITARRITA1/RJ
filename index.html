@@ -38,29 +38,3 @@
 </body>
 
 </html>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<script>
-
-const supabase = Supabase.createClient(
-"https://vlvfbckdqemjghphefnx.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"
-);
-
-async function guardar(id,material,tipo,tipo,cantidad,fecha){
-
-await supabase
-.from("movimientos")
-.insert([{id:id,material:material,tipo:tipo,cantidad:cantidad,fecha:fecha}]);
-
-alert("Movimiento guardado");
-
-}
-
-</script>
-
-
-
-
