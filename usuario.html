@@ -50,12 +50,16 @@ Cliente / Proveedor
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
 
-const supabase = supabase.createClient(
+const { createClient } = supabase
+
+const supabaseClient = createClient(
 "https://vlvfbckdqemjghphefnx.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"
-);
+"TU_ANON_KEY"
+)
 
 // cargar materiales desde localStorage
 function cargarMateriales(){
@@ -89,7 +93,7 @@ let cantidad=parseInt(document.getElementById("cantidad").value)
 let responsable=document.getElementById("responsable").value
 let cliente=document.getElementById("cliente").value
 
-const { data, error } = await supabase
+const { error } = await supabaseClient
 .from("movimientos")
 .insert([
 {
@@ -106,6 +110,11 @@ console.log(error)
 alert("Error al guardar")
 }else{
 alert("Movimiento guardado")
+
+document.getElementById("cantidad").value=""
+document.getElementById("responsable").value=""
+document.getElementById("cliente").value=""
+
 }
 
 }
@@ -116,4 +125,5 @@ cargarMateriales()
 
 </body>
 </html>
+
 
