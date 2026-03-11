@@ -39,5 +39,25 @@
 </html>
 
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabase = Supabase.createClient(
+"https://TU_PROYECTO.supabase.co",
+"TU_ANON_KEY"
+);
+
+async function guardar(material,tipo,cantidad){
+
+await supabase
+.from("movimientos")
+.insert([{material:material,tipo:tipo,cantidad:cantidad}]);
+
+alert("Movimiento guardado");
+
+}
+
+</script>
 
 
