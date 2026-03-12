@@ -1,4 +1,21 @@
-<table border="1" id="tabla">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Stock Actual</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 80%; margin: auto; }
+    th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Stock Actual</h2>
+
+<table id="tabla">
 <tr>
 <th>Código</th>
 <th>Material</th>
@@ -7,40 +24,45 @@
 </tr>
 </table>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // regenera tu key por seguridad
-
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // regenera si la clave ya estuvo expuesta
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function cargarStock() {
     const tabla = document.getElementById("tabla");
 
-    const { data, error } = await supabase
-        .from("stock_actual")
-        .select("*");
+    try {
+        const { data, error } = await supabase.from("stock_actual").select("*");
 
-    if (error) {
-        console.error("Error cargando stock:", error);
-        return;
+        if (error) {
+            console.error("Error cargando stock:", error);
+            return;
+        }
+
+        // Limpiar tabla excepto encabezado
+        tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
+
+        // Insertar filas
+        data.forEach(mat => {
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+                <td>${mat.codigo}</td>
+                <td>${mat.material}</td>
+                <td>${mat.dimensional}</td>
+                <td>${mat.stock}</td>
+            `;
+            tabla.appendChild(fila);
+        });
+
+    } catch (err) {
+        console.error("Fetch falló:", err);
     }
-
-    // limpiar tabla
-    tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
-
-    // mostrar datos
-    data.forEach(mat => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-            <td>${mat.codigo}</td>
-            <td>${mat.material}</td>
-            <td>${mat.dimensional}</td>
-            <td>${mat.stock}</td>
-        `;
-        tabla.appendChild(fila);
-    });
 }
 
+// Cargar stock al abrir la página
 cargarStock();
 </script>
+
+</body>
+</html>
