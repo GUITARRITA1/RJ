@@ -21,6 +21,8 @@ const { data: movimientos } = await supabase
 .from("movimientos")
 .select("*")
 
+console.log("Movimientos:", movimientos)
+
 let stock = {}
 
 // inicializar materiales
