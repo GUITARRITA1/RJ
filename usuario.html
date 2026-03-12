@@ -1,4 +1,4 @@
-s<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -85,7 +85,7 @@ s<!DOCTYPE html>
     let cliente = document.getElementById("cliente").value
     let material = document.getElementById("material").value
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente,materiales })
+    console.log({ codigo, tipo, cantidad, responsable, cliente, material })
 
     const { data, error } = await supabaseClient
       .from("movimientos")
@@ -122,6 +122,7 @@ s<!DOCTYPE html>
 
 </body>
 </html>
+
 
 
 
