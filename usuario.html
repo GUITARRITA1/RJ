@@ -5,19 +5,11 @@
 <title>Movimiento de Material</title>
 <style>
   body { font-family: Arial, sans-serif; margin: 20px; }
-  input, select, button { margin: 5px 0; padding: 5px; width: 200px; }
+  input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
   label { display: block; margin-top: 10px; }
 </style>
 </head>
 <body>
-
-<div style="text-align:center; margin-bottom:20px;">
-  <img src="RJ.jpg" style="max-width:300px;">
-</div>
-
-<div style="text-align:right; margin-bottom:20px;">
-  <img src="INGE.jpg" style="max-width:300px;">
-</div>
 
 <h2>Entrada / Salida de Material</h2>
 
@@ -41,16 +33,18 @@
 <label>Cliente / Proveedor:</label>
 <input id="cliente">
 
+<label>Detalles adicionales:</label>
+<input id="materiales" placeholder="Ej: Dimensiones, color, notas">
+
 <button id="guardarBtn">Guardar</button>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Inicializar Supabase
   const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // reemplaza con tu anon key
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Cargar materiales en el datalist
+  // Cargar materiales desde localStorage (o puedes traer desde Supabase)
   function cargarMateriales() {
     const materiales = JSON.parse(localStorage.getItem("materiales")) || [];
     const datalist = document.getElementById("materialesList");
@@ -62,23 +56,27 @@
     });
   }
 
-  // Guardar movimiento en Supabase
   async function guardar() {
     const input = document.getElementById("codigo").value;
     const codigo = input.split(" - ")[0];
 
-    if (!codigo) { 
-      alert("Selecciona un material válido"); 
-      return;
-    }
-
     const tipo = document.getElementById("tipo").value;
-    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const cantidadInput = document.getElementById("cantidad").value;
+    const cantidad = parseInt(cantidadInput);
     const responsable = document.getElementById("responsable").value;
     const cliente = document.getElementById("cliente").value;
+    const materiales = document.getElementById("materiales").value;
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente });
+    // Validaciones
+    if (!codigo) { alert("Selecciona un material válido"); return; }
+    if (!tipo) { alert("Selecciona un tipo"); return; }
+    if (!cantidadInput || isNaN(cantidad)) { alert("Cantidad inválida"); return; }
+    if (!responsable) { alert("Ingresa el responsable"); return; }
+    if (!cliente) { alert("Ingresa el cliente/proveedor"); return; }
 
+    console.log({ codigo, tipo, cantidad, responsable, cliente, materiales });
+
+    // Insertar en Supabase
     const { data, error } = await supabaseClient
       .from("movimientos")
       .insert([{
@@ -87,6 +85,7 @@
         cantidad,
         responsable,
         cliente,
+        materiales,
         fecha: new Date().toISOString()
       }]);
 
@@ -103,10 +102,10 @@
       document.getElementById("cantidad").value = "";
       document.getElementById("responsable").value = "";
       document.getElementById("cliente").value = "";
+      document.getElementById("materiales").value = "";
     }
   }
 
-  // Ejecutar al cargar
   cargarMateriales();
   document.getElementById("guardarBtn").addEventListener("click", guardar);
 </script>
