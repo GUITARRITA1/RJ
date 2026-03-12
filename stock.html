@@ -14,6 +14,8 @@ const { data: materiales } = await supabase
 .from("materiales")
 .select("*")
 
+console.log("materiales:", materiales)
+
 // traer movimientos
 const { data: movimientos } = await supabase
 .from("movimientos")
