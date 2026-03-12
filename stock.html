@@ -1,59 +1,56 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Stock</title>
-<style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h2 { text-align: center; }
-    table { width: 80%; margin: auto; border-collapse: collapse; }
-    th, td { padding: 8px 12px; text-align: center; }
-    th { background-color: #f2f2f2; }
-</style>
-</head>
-<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-<h2>Stock Actual</h2>
+const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-<table border="1" id="tabla">
-<tr>
-<th>Código</th>
-<th>Material</th>
-<th>Dimensional</th>
-<th>Stock</th>
-</tr>
-</table>
+async function cargarStock(){
 
-<script>
-let movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
-let materiales = JSON.parse(localStorage.getItem("materiales")) || [];
+const tabla = document.getElementById("tabla")
 
-let stock = {};
+// traer materiales
+const { data: materiales } = await supabase
+.from("materiales")
+.select("*")
 
-// Inicializamos stock de todos los materiales a 0
-materiales.forEach(mat => {
-    stock[mat.codigo] = 0;
-});
+// traer movimientos
+const { data: movimientos } = await supabase
+.from("movimientos")
+.select("*")
 
-// Aplicamos movimientos
-movimientos.forEach(m => {
-    if(m.tipo === "entrada") stock[m.codigo] += m.cantidad;
-    else stock[m.codigo] -= m.cantidad;
-});
+let stock = {}
 
-// Mostramos tabla
-const tabla = document.getElementById("tabla");
-materiales.forEach(mat => {
-    let fila = document.createElement("tr");
-    fila.innerHTML = `
-        <td>${mat.codigo}</td>
-        <td>${mat.material}</td>
-        <td>${mat.dimensional}</td>
-        <td>${stock[mat.codigo]}</td>
-    `;
-    tabla.appendChild(fila);
-});
-</script>
+// inicializar materiales
+materiales.forEach(mat=>{
+stock[mat.codigo] = 0
+})
 
-</body>
-</html>
+// calcular movimientos
+movimientos.forEach(m=>{
+
+if(m.tipo=="entrada")
+stock[m.codigo] += m.cantidad
+else
+stock[m.codigo] -= m.cantidad
+
+})
+
+// mostrar tabla
+materiales.forEach(mat=>{
+
+let fila = document.createElement("tr")
+
+fila.innerHTML = `
+<td>${mat.codigo}</td>
+<td>${mat.material}</td>
+<td>${mat.dimensional}</td>
+<td>${stock[mat.codigo]}</td>
+`
+
+tabla.appendChild(fila)
+
+})
+
+}
+
+cargarStock()
