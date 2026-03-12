@@ -86,6 +86,8 @@ alert("Selecciona un material válido")
 return
 }
 
+let codigo=document.getElementById("codigo").value  
+let material=document.getElementById("material").value
 let tipo=document.getElementById("tipo").value
 let cantidad=parseInt(document.getElementById("cantidad").value)
 let responsable=document.getElementById("responsable").value
@@ -96,6 +98,7 @@ const { error } = await supabaseClient
 .insert([
 {
 codigo:codigo,
+material:material,
 tipo:tipo,
 cantidad:cantidad,
 responsable:responsable,
@@ -110,9 +113,11 @@ alert("Error al guardar")
 alert("Movimiento guardado")
 
 document.getElementById("cantidad").value=""
+document.getElementById("material").value=""
+document.getElementById("tipo").value=""
+document.getElementById("cantidad").value=""
 document.getElementById("responsable").value=""
 document.getElementById("cliente").value=""
-
 }
 
 }
@@ -123,6 +128,7 @@ cargarMateriales()
 
 </body>
 </html>
+
 
 
 
