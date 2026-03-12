@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { text-align: center; }
+        table { width: 80%; margin: auto; border-collapse: collapse; }
+        th, td { padding: 8px 12px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        img { max-width: 300px; height: auto; }
+        .top-left { text-align: left; margin-bottom: 20px; }
+        .top-right { text-align: right; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="top-left">
+    <img src="RJ.jpg" alt="REFRIGERACION JULIO">
+</div>
+
+<div class="top-right">
+    <img src="INGE.jpg" alt="REFRIGERACION JULIO">
+</div>
+
+<h2>Stock Actual</h2>
+
+<table border="1" id="tabla">
+    <tr>
+        <th>Código</th>
+        <th>Material</th>
+        <th>Dimensional</th>
+        <th>Stock</th>
+    </tr>
+</table>
+
+<script>
+// Traemos materiales y movimientos desde localStorage
+let movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+let materiales = JSON.parse(localStorage.getItem("materiales")) || [];
+
+// Función para calcular stock y actualizar la tabla
+function actualizarTabla() {
+    const tabla = document.getElementById("tabla");
+
+    // Limpiamos todas las filas excepto la cabecera
+    tabla.querySelectorAll("tr:not(:first-child)").forEach(f => f.remove());
+
+    // Calculamos stock por código
+    let stock = {};
+    movimientos.forEach(m => {
+        if (!stock[m.codigo]) stock[m.codigo] = 0;
+        if (m.tipo === "entrada") stock[m.codigo] += m.cantidad;
+        else stock[m.codigo] -= m.cantidad;
+    });
+
+    // Recorremos todos los materiales
+    materiales.forEach(mat => {
+        let cantidad = stock[mat.codigo] || 0;
+
+        let fila = document.createElement("tr");
+        fila.innerHTML = `
+            <td>${mat.codigo}</td>
+            <td>${mat.material}</td>
+            <td>${mat.dimensional}</td>
+            <td>${cantidad}</td>
+        `;
+        tabla.appendChild(fila);
+    });
+}
+
+// Llamamos a la función para mostrar la tabla inicialmente
+actualizarTabla();
+
+/* 
+Opcional: si quieres que la tabla se actualice automáticamente cuando se cambien 
+movimientos o materiales desde otra ventana, se puede usar "storage" event:
+*/
+
+window.addEventListener("storage", () => {
+    movimientos = JSON.parse(localStorage.getItem("movimientos")) || [];
+    materiales = JSON.parse(localStorage.getItem("materiales")) || [];
+    actualizarTabla();
+});
+</script>
+
+</body>
+</html>
