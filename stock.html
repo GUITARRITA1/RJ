@@ -4,29 +4,20 @@ const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+
 async function cargarStock(){
 
 const tabla = document.getElementById("tabla")
 
 // traer materiales
-const { data: materiales, error: errorMateriales } = await supabase
+const { data: materiales } = await supabase
 .from("materiales")
 .select("*")
 
-if(errorMateriales){
-console.log(errorMateriales)
-return
-}
-
 // traer movimientos
-const { data: movimientos, error: errorMovimientos } = await supabase
+const { data: movimientos } = await supabase
 .from("movimientos")
 .select("*")
-
-if(errorMovimientos){
-console.log(errorMovimientos)
-return
-}
 
 let stock = {}
 
@@ -37,13 +28,14 @@ stock[mat.codigo] = 0
 
 // calcular movimientos
 movimientos.forEach(m=>{
-
 if(m.tipo=="entrada")
 stock[m.codigo] += m.cantidad
 else
 stock[m.codigo] -= m.cantidad
-
 })
+
+// limpiar tabla (menos encabezado)
+tabla.querySelectorAll("tr:not(:first-child)").forEach(e=>e.remove())
 
 // mostrar tabla
 materiales.forEach(mat=>{
