@@ -17,6 +17,7 @@
 <h2>Entrada / Salida de Material</h2>
 
 <!-- Formulario -->
+
 <label>Material:</label>
 <input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
 <datalist id="materialesList"></datalist>
@@ -83,6 +84,7 @@
     let cantidad = parseInt(document.getElementById("cantidad").value)
     let responsable = document.getElementById("responsable").value
     let cliente = document.getElementById("cliente").value
+    let materialesList = document.getElementById("materialesList").value
 
     console.log({ codigo, tipo, cantidad, responsable, cliente })
 
@@ -94,7 +96,7 @@
         cantidad,
         responsable,
         cliente,
-        materiales,
+        materialesList,
         fecha: new Date().toISOString()
       }])
 
@@ -111,7 +113,7 @@
       document.getElementById("cantidad").value = ""
       document.getElementById("responsable").value = ""
       document.getElementById("cliente").value = ""
-      document.getElementById("materiales").value = ""
+      document.getElementById("materialesList").value = ""
  }
   }
 
@@ -121,6 +123,7 @@
 
 </body>
 </html>
+
 
 
 
