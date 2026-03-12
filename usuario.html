@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Movimiento de Material</title>
+<meta charset="UTF-8">
+<title>Movimiento de Material</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input, select, button { margin: 5px 0; padding: 5px; width: 200px; }
+  label { display: block; margin-top: 10px; }
+</style>
 </head>
 <body>
 
@@ -17,12 +22,9 @@
 <h2>Entrada / Salida de Material</h2>
 
 <!-- Formulario -->
-
 <label>Material:</label>
 <input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
 <datalist id="materialesList"></datalist>
-
-<br><br>
 
 <label>Tipo:</label>
 <select id="tipo">
@@ -30,63 +32,52 @@
   <option value="salida">Salida</option>
 </select>
 
-<br><br>
-
 <label>Cantidad:</label>
 <input type="number" id="cantidad">
-
-<br><br>
 
 <label>Responsable:</label>
 <input id="responsable">
 
-<br><br>
-
 <label>Cliente / Proveedor:</label>
 <input id="cliente">
 
-<br><br>
+<button id="guardarBtn">Guardar</button>
 
-<button onclick="guardar()">Guardar</button>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // Inicializar Supabase
-  const { createClient } = supabase
-  const supabaseClient = createClient(
-    "https://vlvfbckdqemjghphefnx.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"  // <-- reemplaza con tu anon key
-  );
+  const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // reemplaza con tu anon key
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Cargar materiales desde localStorage (puedes adaptarlo a Supabase si quieres)
+  // Cargar materiales en el datalist
   function cargarMateriales() {
-    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
-    let datalist = document.getElementById("materialesList")
-    datalist.innerHTML = ""
+    const materiales = JSON.parse(localStorage.getItem("materiales")) || [];
+    const datalist = document.getElementById("materialesList");
+    datalist.innerHTML = "";
     materiales.forEach(m => {
-      let opcion = document.createElement("option")
-      opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
-      datalist.appendChild(opcion)
-    })
+      const opcion = document.createElement("option");
+      opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional;
+      datalist.appendChild(opcion);
+    });
   }
 
   // Guardar movimiento en Supabase
   async function guardar() {
-    let input = document.getElementById("codigo").value
-    let codigo = input.split(" - ")[0]
+    const input = document.getElementById("codigo").value;
+    const codigo = input.split(" - ")[0];
 
-    if (!codigo) {
-      alert("Selecciona un material válido")
-      return
+    if (!codigo) { 
+      alert("Selecciona un material válido"); 
+      return;
     }
 
-    let tipo = document.getElementById("tipo").value
-    let cantidad = parseInt(document.getElementById("cantidad").value)
-    let responsable = document.getElementById("responsable").value
-    let cliente = document.getElementById("cliente").value
-    let materialesList = document.getElementById("materialesList").value
+    const tipo = document.getElementById("tipo").value;
+    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const responsable = document.getElementById("responsable").value;
+    const cliente = document.getElementById("cliente").value;
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente })
+    console.log({ codigo, tipo, cantidad, responsable, cliente });
 
     const { data, error } = await supabaseClient
       .from("movimientos")
@@ -96,39 +87,29 @@
         cantidad,
         responsable,
         cliente,
-        materialesList,
         fecha: new Date().toISOString()
-      }])
+      }]);
 
-    console.log("DATA:", data)
-    console.log("ERROR:", error)
+    console.log("DATA:", data);
+    console.log("ERROR:", error);
 
     if (error) {
-      alert("Error al guardar, revisa la consola")
+      alert("Error al guardar, revisa la consola");
     } else {
-      alert("Movimiento guardado")
+      alert("Movimiento guardado correctamente");
       // Limpiar campos
-      document.getElementById("codigo").value = ""
-      document.getElementById("tipo").value = "entrada"
-      document.getElementById("cantidad").value = ""
-      document.getElementById("responsable").value = ""
-      document.getElementById("cliente").value = ""
-      document.getElementById("materialesList").value = ""
- }
+      document.getElementById("codigo").value = "";
+      document.getElementById("tipo").value = "entrada";
+      document.getElementById("cantidad").value = "";
+      document.getElementById("responsable").value = "";
+      document.getElementById("cliente").value = "";
+    }
   }
 
-  // Cargar materiales al abrir la página
-  cargarMateriales()
+  // Ejecutar al cargar
+  cargarMateriales();
+  document.getElementById("guardarBtn").addEventListener("click", guardar);
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
