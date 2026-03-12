@@ -83,8 +83,9 @@
     let cantidad = parseInt(document.getElementById("cantidad").value)
     let responsable = document.getElementById("responsable").value
     let cliente = document.getElementById("cliente").value
+    let materiales = document.getElementById("materiales").value
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente })
+    console.log({ codigo, tipo, cantidad, responsable, cliente,materiales })
 
     const { data, error } = await supabaseClient
       .from("movimientos")
@@ -94,6 +95,7 @@
         cantidad,
         responsable,
         cliente,
+        materiales,
         fecha: new Date().toISOString()
       }])
 
@@ -110,7 +112,8 @@
       document.getElementById("cantidad").value = ""
       document.getElementById("responsable").value = ""
       document.getElementById("cliente").value = ""
-    }
+      document.getElementById("materiales").value = ""
+ }
   }
 
   // Cargar materiales al abrir la página
@@ -119,4 +122,5 @@
 
 </body>
 </html>
+
 
