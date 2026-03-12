@@ -1,4 +1,15 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<table border="1" id="tabla">
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Dimensional</th>
+<th>Stock</th>
+</tr>
+</table>
+
+<script>
+  
+  //<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
@@ -9,19 +20,40 @@ async function cargarStock(){
 
 const tabla = document.getElementById("tabla")
 
-// traer materiales
-const { data: materiales } = await supabase
+const { data: materiales, error: err1 } = await supabase
 .from("materiales")
 .select("*")
 
 console.log("materiales:", materiales)
+console.log("error materiales:", err1)
 
-// traer movimientos
-const { data: movimientos } = await supabase
+const { data: movimientos, error: err2 } = await supabase
 .from("movimientos")
 .select("*")
 
-console.log("Movimientos:", movimientos)
+console.log("movimientos:", movimientos)
+console.log("error movimientos:", err2)
+
+}
+
+cargarStock()
+
+</script>
+
+
+// traer materiales
+//const { data: materiales } = await supabase
+//.from("materiales")
+//.select("*")
+
+//console.log("materiales:", materiales)
+
+// traer movimientos
+//const { data: movimientos } = await supabase
+//.from("movimientos")
+//.select("*")
+
+//console.log("Movimientos:", movimientos)
 
 let stock = {}
 
