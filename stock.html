@@ -9,14 +9,24 @@ async function cargarStock(){
 const tabla = document.getElementById("tabla")
 
 // traer materiales
-const { data: materiales } = await supabase
+const { data: materiales, error: errorMateriales } = await supabase
 .from("materiales")
 .select("*")
 
+if(errorMateriales){
+console.log(errorMateriales)
+return
+}
+
 // traer movimientos
-const { data: movimientos } = await supabase
+const { data: movimientos, error: errorMovimientos } = await supabase
 .from("movimientos")
 .select("*")
+
+if(errorMovimientos){
+console.log(errorMovimientos)
+return
+}
 
 let stock = {}
 
