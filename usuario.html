@@ -64,7 +64,7 @@ s<!DOCTYPE html>
     datalist.innerHTML = ""
     materiales.forEach(m => {
       let opcion = document.createElement("option")
-      opcion.value = m.codigo + " - " + m.materiales + " - " + m.dimensional
+      opcion.value = m.codigo + " - " + m.material + " - " + m.dimensional
       datalist.appendChild(opcion)
     })
   }
@@ -83,7 +83,7 @@ s<!DOCTYPE html>
     let cantidad = parseInt(document.getElementById("cantidad").value)
     let responsable = document.getElementById("responsable").value
     let cliente = document.getElementById("cliente").value
-    let materiales = document.getElementById("materiales").value
+    let material = document.getElementById("material").value
 
     console.log({ codigo, tipo, cantidad, responsable, cliente,materiales })
 
@@ -122,6 +122,7 @@ s<!DOCTYPE html>
 
 </body>
 </html>
+
 
 
 
