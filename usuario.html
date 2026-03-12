@@ -52,11 +52,12 @@ Cliente / Proveedor
 
 <script>
 
+// conectar con Supabase
 const { createClient } = supabase
 
 const supabaseClient = createClient(
 "https://vlvfbckdqemjghphefnx.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"
+"TU_ANON_KEY"
 )
 
 // cargar materiales desde localStorage
@@ -86,8 +87,6 @@ alert("Selecciona un material válido")
 return
 }
 
-let codigo=document.getElementById("codigo").value  
-let material=document.getElementById("material").value
 let tipo=document.getElementById("tipo").value
 let cantidad=parseInt(document.getElementById("cantidad").value)
 let responsable=document.getElementById("responsable").value
@@ -98,7 +97,6 @@ const { error } = await supabaseClient
 .insert([
 {
 codigo:codigo,
-material:material,
 tipo:tipo,
 cantidad:cantidad,
 responsable:responsable,
@@ -108,13 +106,11 @@ cliente:cliente
 
 if(error){
 console.log(error)
-alert("Error al guardar")
+alert("Error al guardar: " + error.message)
 }else{
 alert("Movimiento guardado")
 
-document.getElementById("cantidad").value=""
-document.getElementById("material").value=""
-document.getElementById("tipo").value=""
+document.getElementById("codigo").value=""
 document.getElementById("cantidad").value=""
 document.getElementById("responsable").value=""
 document.getElementById("cliente").value=""
@@ -122,16 +118,10 @@ document.getElementById("cliente").value=""
 
 }
 
+// cargar materiales al abrir la página
 cargarMateriales()
 
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
