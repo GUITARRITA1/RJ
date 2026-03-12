@@ -1,74 +1,37 @@
-<table border="1" id="tabla">
-<tr>
-<th>Código</th>
-<th>Material</th>
-<th>Dimensional</th>
-<th>Stock</th>
-</tr>
-</table>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // regenera tu key por seguridad
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-async function cargarStock(){
+<script>
+async function cargarStock() {
+    const tabla = document.getElementById("tabla");
 
-    const tabla = document.getElementById("tabla")
+    const { data, error } = await supabase
+        .from("stock_actual")
+        .select("*");
 
-    // traer materiales
-    const { data: materiales, error: err1 } = await supabase
-        .from("materiales")
-        .select("*")
-
-    if(err1){
-        console.error("Error materiales:", err1)
-        return
+    if (error) {
+        console.error("Error cargando stock:", error);
+        return;
     }
-    console.log("materiales:", materiales)
 
-    // traer movimientos
-    const { data: movimientos, error: err2 } = await supabase
-        .from("movimientos")
-        .select("*")
+    // limpiar tabla
+    tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
 
-    if(err2){
-        console.error("Error movimientos:", err2)
-        return
-    }
-    console.log("movimientos:", movimientos)
-
-    let stock = {}
-
-    // inicializar stock en 0
-    materiales.forEach(mat=>{
-        stock[mat.codigo] = 0
-    })
-
-    // calcular stock sumando/restando
-    movimientos.forEach(m=>{
-        const cantidad = Number(m.cantidad) // por si es texto
-        if(m.tipo === "entrada") stock[m.codigo] += cantidad
-        else stock[m.codigo] -= cantidad
-    })
-
-    // limpiar tabla (menos encabezado)
-    tabla.querySelectorAll("tr:not(:first-child)").forEach(e=>e.remove())
-
-    // mostrar tabla
-    materiales.forEach(mat=>{
-        const fila = document.createElement("tr")
+    // mostrar datos
+    data.forEach(mat => {
+        const fila = document.createElement("tr");
         fila.innerHTML = `
             <td>${mat.codigo}</td>
             <td>${mat.material}</td>
             <td>${mat.dimensional}</td>
-            <td>${stock[mat.codigo]}</td>
-        `
-        tabla.appendChild(fila)
-    })
-
+            <td>${mat.stock}</td>
+        `;
+        tabla.appendChild(fila);
+    });
 }
 
-cargarStock()
+cargarStock();
 </script>
