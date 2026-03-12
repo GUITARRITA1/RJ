@@ -84,7 +84,7 @@
     let responsable = document.getElementById("responsable").value
     let cliente = document.getElementById("cliente").value
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente, })
+    console.log({ codigo, tipo, cantidad, responsable, cliente })
 
     const { data, error } = await supabaseClient
       .from("movimientos")
@@ -121,6 +121,7 @@
 
 </body>
 </html>
+
 
 
 
