@@ -25,18 +25,20 @@
 </table>
 
 <script>
-  // ---------- Inicializar Supabase (solo una vez) ----------
-  const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+  // Inicializar Supabase solo si no existe
+  if (!window.supabase) {
+      window.supabase = supabase.createClient(
+          "https://vlvfbckdqemjghphefnx.supabase.co",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"
+      );
+  }
 
-  // ---------- Función para cargar stock ----------
+  // Función para cargar stock desde la vista stock_actual
   async function cargarStock() {
       const tabla = document.getElementById("tabla");
 
       try {
-          // Traer datos de la vista stock_actual
-          const { data, error } = await supabase
+          const { data, error } = await window.supabase
               .from("stock_actual")
               .select("*");
 
