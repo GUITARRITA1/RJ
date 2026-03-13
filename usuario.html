@@ -40,11 +40,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  // Inicializar Supabase
   const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-  // Cargar materiales desde localStorage (o puedes traer desde Supabase)
+  // Cargar materiales desde localStorage
   function cargarMateriales() {
     const materiales = JSON.parse(localStorage.getItem("materiales")) || [];
     const datalist = document.getElementById("materialesList");
@@ -66,7 +67,11 @@
     const responsable = document.getElementById("responsable").value;
     const cliente = document.getElementById("cliente").value;
     const detalles = document.getElementById("detalles").value;
-    const material = document.getElementById("materialList").value;
+
+    // Buscar el nombre del material desde materialesList
+    const materiales = JSON.parse(localStorage.getItem("materiales")) || [];
+    const matObj = materiales.find(m => m.codigo === codigo);
+    const material = matObj ? matObj.material : "";
 
     // Validaciones
     if (!codigo) { alert("Selecciona un material válido"); return; }
@@ -82,12 +87,12 @@
       .from("movimientos")
       .insert([{
         codigo,
+        material,       // ahora guarda el nombre real
         tipo,
         cantidad,
         responsable,
         cliente,
         detalles,
-        material,
         fecha: new Date().toISOString()
       }]);
 
@@ -105,18 +110,13 @@
       document.getElementById("responsable").value = "";
       document.getElementById("cliente").value = "";
       document.getElementById("detalles").value = "";
-      document.getElementById("material").value = "";
-   }
+    }
   }
 
+  // Eventos
   cargarMateriales();
   document.getElementById("guardarBtn").addEventListener("click", guardar);
 </script>
 
 </body>
 </html>
-
-
-
-
-
