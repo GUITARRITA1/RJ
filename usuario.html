@@ -66,6 +66,7 @@
     const responsable = document.getElementById("responsable").value;
     const cliente = document.getElementById("cliente").value;
     const detalles = document.getElementById("detalles").value;
+    const material = document.getElementById("material").value;
 
     // Validaciones
     if (!codigo) { alert("Selecciona un material válido"); return; }
@@ -74,7 +75,7 @@
     if (!responsable) { alert("Ingresa el responsable"); return; }
     if (!cliente) { alert("Ingresa el cliente/proveedor"); return; }
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente, detalles });
+    console.log({ codigo, material, tipo, cantidad, responsable, cliente, detalles });
 
     // Insertar en Supabase
     const { data, error } = await supabaseClient
@@ -86,6 +87,7 @@
         responsable,
         cliente,
         detalles,
+        material,
         fecha: new Date().toISOString()
       }]);
 
@@ -103,7 +105,8 @@
       document.getElementById("responsable").value = "";
       document.getElementById("cliente").value = "";
       document.getElementById("detalles").value = "";
-    }
+      document.getElementById("material").value = "";
+   }
   }
 
   cargarMateriales();
@@ -112,6 +115,7 @@
 
 </body>
 </html>
+
 
 
 
