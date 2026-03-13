@@ -25,11 +25,14 @@
 </table>
 
 <script>
-  // Inicializar Supabase
+  // ---------- Configuración de Supabase ----------
   const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; 
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+
+  // Solo declaramos supabase una vez
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+  // ---------- Función para cargar stock ----------
   async function cargarStock() {
       const tabla = document.getElementById("tabla");
 
