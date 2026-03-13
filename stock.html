@@ -18,7 +18,6 @@
 <tr>
   <th>Código</th>
   <th>Material</th>
-  <th>Dimensional</th>
   <th>Stock</th>
 </tr>
 </table>
@@ -35,41 +34,26 @@ async function cargarStock() {
     const tabla = document.getElementById("tabla");
 
     try {
-        // Traer todos los movimientos
-        const { data: movimientos, error } = await supabase
-            .from("movimientos")
-            .select("*");
+        // Traer stock directamente de la tabla stock_actual
+        const { data: stockData, error } = await supabase
+            .from("stock_actual")
+            .select("codigo, materiales, stock");  // materiales = nombre del material
 
         if (error) {
-            console.error("Error cargando movimientos:", error);
+            console.error("Error cargando stock:", error);
             return;
         }
-
-        // Calcular stock por código
-        let stock = {};
-        movimientos.forEach(m => {
-            if (!stock[m.codigo]) {
-                stock[m.codigo] = {
-                    cantidad: 0,
-                    material: m.material || "Desconocido",
-                    dimensional: m.dimensional || ""
-                };
-            }
-            if (m.tipo === "entrada") stock[m.codigo].cantidad += m.cantidad;
-            else stock[m.codigo].cantidad -= m.cantidad;
-        });
 
         // Limpiar tabla excepto encabezado
         tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
 
-        // Mostrar stock
-        Object.keys(stock).forEach(codigo => {
+        // Mostrar cada fila
+        stockData.forEach(item => {
             const fila = document.createElement("tr");
             fila.innerHTML = `
-                <td>${codigo}</td>
-                <td>${stock[codigo].material}</td>
-                <td>${stock[codigo].dimensional}</td>
-                <td>${stock[codigo].cantidad}</td>
+                <td>${item.codigo}</td>
+                <td>${item.materiales}</td>
+                <td>${item.stock}</td>
             `;
             tabla.appendChild(fila);
         });
