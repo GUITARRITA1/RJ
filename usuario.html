@@ -65,7 +65,7 @@
     const cantidad = parseInt(cantidadInput);
     const responsable = document.getElementById("responsable").value;
     const cliente = document.getElementById("cliente").value;
-    const materiales = document.getElementById("materiales").value;
+    const detalles = document.getElementById("detalles").value;
 
     // Validaciones
     if (!codigo) { alert("Selecciona un material válido"); return; }
@@ -85,7 +85,7 @@
         cantidad,
         responsable,
         cliente,
-        materiales,
+        detalles,
         fecha: new Date().toISOString()
       }]);
 
@@ -102,7 +102,7 @@
       document.getElementById("cantidad").value = "";
       document.getElementById("responsable").value = "";
       document.getElementById("cliente").value = "";
-      document.getElementById("materiales").value = "";
+      document.getElementById("detalles").value = "";
     }
   }
 
@@ -112,4 +112,5 @@
 
 </body>
 </html>
+
 
