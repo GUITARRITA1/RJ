@@ -74,7 +74,7 @@
     if (!responsable) { alert("Ingresa el responsable"); return; }
     if (!cliente) { alert("Ingresa el cliente/proveedor"); return; }
 
-    console.log({ codigo, tipo, cantidad, responsable, cliente, materiales });
+    console.log({ codigo, tipo, cantidad, responsable, cliente, detalles });
 
     // Insertar en Supabase
     const { data, error } = await supabaseClient
@@ -112,5 +112,6 @@
 
 </body>
 </html>
+
 
 
