@@ -1,68 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 <meta charset="UTF-8">
 <title>Stock Actual</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: collapse; width: 80%; margin: auto; }
-    th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
+body{
+font-family: Arial;
+margin:20px;
+}
+
+table{
+border-collapse: collapse;
+width:80%;
+margin:auto;
+}
+
+th,td{
+border:1px solid #333;
+padding:8px;
+text-align:center;
+}
+
+th{
+background:#f2f2f2;
+}
+
+h2{
+text-align:center;
+}
 </style>
+
 </head>
+
 <body>
 
-<h2 style="text-align:center;">Stock Actual</h2>
+<h2>Stock Actual</h2>
 
 <table id="tabla">
+
 <tr>
 <th>Código</th>
 <th>Material</th>
-<th>Dimensional</th>
 <th>Stock</th>
 </tr>
+
 </table>
 
 <script>
+
+// conexión Supabase
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // regenera si la clave ya estuvo expuesta
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseKey = "TU_ANON_KEY"; 
 
-async function cargarStock() {
-    const tabla = document.getElementById("tabla");
+const supabaseClient = supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
 
-    try {
-        const { data, error } = await supabase.from("stock_actual").select("*");
 
-        if (error) {
-            console.error("Error cargando stock:", error);
-            return;
-        }
+// cargar stock
+async function cargarStock(){
 
-        // Limpiar tabla excepto encabezado
-        tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
+const tabla=document.getElementById("tabla")
 
-        // Insertar filas
-        data.forEach(mat => {
-            const fila = document.createElement("tr");
-            fila.innerHTML = `
-                <td>${mat.codigo}</td>
-                <td>${mat.material}</td>
-                <td>${mat.dimensional}</td>
-                <td>${mat.stock}</td>
-            `;
-            tabla.appendChild(fila);
-        });
+const { data, error } = await supabaseClient
+.from("stock_actual")
+.select("*")
+.order("codigo",{ascending:true})
 
-    } catch (err) {
-        console.error("Fetch falló:", err);
-    }
+console.log("STOCK:",data)
+console.log("ERROR:",error)
+
+if(error){
+console.error("Error cargando stock:",error)
+return
 }
 
-// Cargar stock al abrir la página
-cargarStock();
+// limpiar tabla
+tabla.querySelectorAll("tr:not(:first-child)").forEach(e=>e.remove())
+
+// insertar filas
+data.forEach(mat=>{
+
+let fila=document.createElement("tr")
+
+fila.innerHTML=`
+<td>${mat.codigo}</td>
+<td>${mat.materiales || ""}</td>
+<td>${mat.stock}</td>
+`
+
+tabla.appendChild(fila)
+
+})
+
+}
+
+
+// ejecutar al abrir
+cargarStock()
+
 </script>
 
 </body>
+
 </html>
