@@ -28,14 +28,14 @@
 <script>
 const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
-const supabase2 = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function cargarStock() {
     const tabla = document.getElementById("tabla");
 
     try {
         // Traer stock directamente de la tabla stock_actual
-        const { data: stockData, error } = await supabase2
+        const { data: stockData, error } = await supabase
             .from("stock_actual")
             .select("codigo, materiales, stock");  // materiales = nombre del material
 
