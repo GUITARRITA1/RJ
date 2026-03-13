@@ -8,11 +8,11 @@
 <body>
 
 <div style="text-align:center; margin-bottom:30px;">
-  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+  <img src="RJ.jpg" style="max-width:800px;">
 </div>
 
 <div style="text-align:right; margin-bottom:30px;">
-  <img src="INGE.jpg" alt="INGE" style="max-width:600px; height:auto;">
+  <img src="INGE.jpg" style="max-width:600px;">
 </div>
 
 <hr>
@@ -23,7 +23,6 @@
 <tr>
 <th>Código</th>
 <th>Material</th>
-<th>Dimensional</th>
 <th>Tipo</th>
 <th>Cantidad</th>
 <th>Responsable</th>
@@ -35,20 +34,22 @@
 
 <hr>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 
-function cargarHistorial() {
+const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-    let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
-    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+async function cargarHistorial() {
 
-    let tabla = document.getElementById("tablaMovimientos")
+    const tabla = document.getElementById("tablaMovimientos")
 
     tabla.innerHTML = `
     <tr>
         <th>Código</th>
         <th>Material</th>
-        <th>Dimensional</th>
         <th>Tipo</th>
         <th>Cantidad</th>
         <th>Responsable</th>
@@ -58,41 +59,53 @@ function cargarHistorial() {
     </tr>
     `
 
-    movimientos.forEach((m, index) => {
+    const { data, error } = await supabaseClient
+        .from("movimientos")
+        .select("*")
+        .order("fecha", { ascending: false })
 
-        let mat = materiales.find(x => x.codigo == m.codigo)
+    if (error) {
+        console.error("Error cargando historial:", error)
+        return
+    }
+
+    data.forEach(m => {
 
         let fila = document.createElement("tr")
 
         fila.innerHTML = `
         <td>${m.codigo}</td>
-        <td>${mat ? mat.material : ""}</td>
-        <td>${mat ? mat.dimensional : ""}</td>
+        <td>${m.materiales || ""}</td>
         <td>${m.tipo}</td>
         <td>${m.cantidad}</td>
         <td>${m.responsable}</td>
         <td>${m.cliente || ""}</td>
-        <td>${m.fecha}</td>
-        <td><button onclick="borrarMovimiento(${index})">Borrar</button></td>
+        <td>${new Date(m.fecha).toLocaleString()}</td>
+        <td><button onclick="borrarMovimiento(${m.id})">Borrar</button></td>
         `
 
         tabla.appendChild(fila)
 
     })
+
 }
 
-function borrarMovimiento(index) {
+async function borrarMovimiento(id) {
 
-    if (confirm("¿Desea borrar este movimiento?")) {
+    if (!confirm("¿Desea borrar este movimiento?")) return
 
-        let movimientos = JSON.parse(localStorage.getItem("movimientos")) || []
+    const { error } = await supabaseClient
+        .from("movimientos")
+        .delete()
+        .eq("id", id)
 
-        movimientos.splice(index, 1)
-
-        localStorage.setItem("movimientos", JSON.stringify(movimientos))
-
+    if (error) {
+        alert("Error al borrar")
+        console.error(error)
+    } else {
         cargarHistorial()
     }
+
 }
 
 cargarHistorial()
