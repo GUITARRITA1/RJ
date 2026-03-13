@@ -23,7 +23,7 @@
 </tr>
 </table>
 
-<!-- Usa la librería supabase local -->
+<!-- Librería Supabase local -->
 <script src="js/supabase.js"></script>
 
 <script>
@@ -32,34 +32,49 @@
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
 
   const supabaseStock = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: false } // evita uso de localStorage
+    auth: { persistSession: false }
   });
 
-  // Función para cargar stock
+  // Cargar stock actual
   async function cargarStock() {
       const tabla = document.getElementById("tabla");
 
       try {
-          const { data, error } = await supabaseStock
-              .from("stock_actual")
+          // Traer movimientos
+          const { data: movimientos, error: errMov } = await supabaseStock
+              .from("movimientos")
               .select("*");
 
-          if (error) {
-              console.error("Error cargando stock:", error);
+          if (errMov) {
+              console.error("Error cargando movimientos:", errMov);
               return;
           }
+
+          // Traer lista de materiales (materialList creada por admin)
+          const materialesLocal = JSON.parse(localStorage.getItem("materiales")) || [];
+
+          // Calcular stock por código
+          let stock = {};
+
+          movimientos.forEach(m => {
+              if (!stock[m.codigo]) stock[m.codigo] = 0;
+              if (m.tipo === "entrada") stock[m.codigo] += m.cantidad;
+              else stock[m.codigo] -= m.cantidad;
+          });
 
           // Limpiar tabla excepto encabezado
           tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
 
-          // Insertar filas
-          data.forEach(mat => {
+          // Mostrar cada material
+          Object.keys(stock).forEach(codigo => {
+              let mat = materialesLocal.find(x => x.codigo == codigo);
+
               const fila = document.createElement("tr");
               fila.innerHTML = `
-                  <td>${mat.codigo}</td>
-                  <td>${mat.material}</td>
-                  <td>${mat.dimensional}</td>
-                  <td>${mat.stock}</td>
+                  <td>${codigo}</td>
+                  <td>${mat ? mat.material : "Material desconocido"}</td>
+                  <td>${mat ? mat.dimensional : ""}</td>
+                  <td>${stock[codigo]}</td>
               `;
               tabla.appendChild(fila);
           });
@@ -69,7 +84,7 @@
       }
   }
 
-  // Cargar stock al abrir la página
+  // Ejecutar al cargar
   cargarStock();
 </script>
 
