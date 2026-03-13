@@ -23,69 +23,64 @@
 </tr>
 </table>
 
-<!-- Librería Supabase local -->
-<script src="js/supabase.js"></script>
+<!-- Librería Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // Inicializar Supabase (instancia separada)
-  const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const supabaseStock = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: false }
-  });
+async function cargarStock() {
+    const tabla = document.getElementById("tabla");
 
-  // Cargar stock actual
-  async function cargarStock() {
-      const tabla = document.getElementById("tabla");
+    try {
+        // Traer todos los movimientos
+        const { data: movimientos, error } = await supabase
+            .from("movimientos")
+            .select("*");
 
-      try {
-          // Traer movimientos
-          const { data: movimientos, error: errMov } = await supabaseStock
-              .from("movimientos")
-              .select("*");
+        if (error) {
+            console.error("Error cargando movimientos:", error);
+            return;
+        }
 
-          if (errMov) {
-              console.error("Error cargando movimientos:", errMov);
-              return;
-          }
+        // Calcular stock por código
+        let stock = {};
+        movimientos.forEach(m => {
+            if (!stock[m.codigo]) {
+                stock[m.codigo] = {
+                    cantidad: 0,
+                    material: m.material || "Desconocido",
+                    dimensional: m.dimensional || ""
+                };
+            }
+            if (m.tipo === "entrada") stock[m.codigo].cantidad += m.cantidad;
+            else stock[m.codigo].cantidad -= m.cantidad;
+        });
 
-          // Traer lista de materiales (materialList creada por admin)
-          const materialesLocal = JSON.parse(localStorage.getItem("materiales")) || [];
+        // Limpiar tabla excepto encabezado
+        tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
 
-          // Calcular stock por código
-          let stock = {};
+        // Mostrar stock
+        Object.keys(stock).forEach(codigo => {
+            const fila = document.createElement("tr");
+            fila.innerHTML = `
+                <td>${codigo}</td>
+                <td>${stock[codigo].material}</td>
+                <td>${stock[codigo].dimensional}</td>
+                <td>${stock[codigo].cantidad}</td>
+            `;
+            tabla.appendChild(fila);
+        });
 
-          movimientos.forEach(m => {
-              if (!stock[m.codigo]) stock[m.codigo] = 0;
-              if (m.tipo === "entrada") stock[m.codigo] += m.cantidad;
-              else stock[m.codigo] -= m.cantidad;
-          });
+    } catch (err) {
+        console.error("Fetch falló:", err);
+    }
+}
 
-          // Limpiar tabla excepto encabezado
-          tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
-
-          // Mostrar cada material
-          Object.keys(stock).forEach(codigo => {
-              let mat = materialesLocal.find(x => x.codigo == codigo);
-
-              const fila = document.createElement("tr");
-              fila.innerHTML = `
-                  <td>${codigo}</td>
-                  <td>${mat ? mat.material : "Material desconocido"}</td>
-                  <td>${mat ? mat.dimensional : ""}</td>
-                  <td>${stock[codigo]}</td>
-              `;
-              tabla.appendChild(fila);
-          });
-
-      } catch (err) {
-          console.error("Fetch falló:", err);
-      }
-  }
-
-  // Ejecutar al cargar
-  cargarStock();
+// Ejecutar al cargar
+cargarStock();
 </script>
 
 </body>
