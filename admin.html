@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Administrador - Inventario</title>
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/supabase.min.js"></script>
+</head>
+
+<body>
+<div style="text-align:center; margin-bottom:30px;">
+  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+</div>
+
+<div style="text-align:RIGHT; margin-bottom:30px;">
+  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:600px; height:auto;">
+</div>
+
+<h2>Alta de Material</h2>
+
+Material
+<input id="material"><br><br>
+
+Rubro
+<input id="rubro"><br><br>
+
+Subclasificación
+<input id="sub"><br><br>
+
+Dimensional
+<input id="dimensional"><br><br>
+
+Descripción adicional
+<input id="descripcion"><br><br>
+
+<button onclick="agregarMaterial()">Guardar Material</button>
+
+<hr>
+
+<a href="histo.html">
+<button>Consultar HISTORIAL</button>
+</a>
+
+<br><br>
+
+<h2>Lista de Materiales</h2>
+<table border="1" id="tablaMateriales">
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Rubro</th>
+<th>Subclasificación</th>
+<th>Dimensional</th>
+<th>Descripción</th>
+</tr>
+</table>
+
+<hr>
+
+<script>
+// ================== SUPABASE ==================
+const supabaseUrl = "https://TU_PROYECTO.supabase.co"; // Reemplaza con tu URL
+const supabaseKey = "TU_ANON_KEY"; // Reemplaza con tu anon key
+const supabase = Supabase.createClient(supabaseUrl, supabaseKey);
+
+// ================== FUNCIONES PARA MATERIALES ==================
+function generarCodigo(rubro, sub) {
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let prefijo = rubro.substring(0, 2).toUpperCase() + sub.substring(0, 2).toUpperCase()
+    let contador = 1
+    materiales.forEach(m => {
+        if (m.codigo.startsWith(prefijo)) contador++
+    })
+    let numero = contador.toString().padStart(6, "0")
+    return prefijo + numero
+}
+
+async function agregarMaterial() {
+    let material = document.getElementById("material").value
+    let rubro = document.getElementById("rubro").value
+    let sub = document.getElementById("sub").value
+    let dimensional = document.getElementById("dimensional").value
+    let descripcion = document.getElementById("descripcion").value
+
+    if (!material || !rubro || !sub) {
+        alert("Material, Rubro y Subclasificación son obligatorios")
+        return
+    }
+
+    let codigo = generarCodigo(rubro, sub)
+
+    let nuevo = {
+        codigo: codigo,
+        material: material,
+        rubro: rubro,
+        sub: sub,
+        dimensional: dimensional,
+        descripcion: descripcion,
+    }
+
+    // ====== GUARDAR EN LOCALSTORAGE ======
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    materiales.push(nuevo)
+    localStorage.setItem("materiales", JSON.stringify(materiales))
+
+    // ====== GUARDAR EN SUPABASE ======
+    try {
+        const { data, error } = await supabase
+            .from("altas")
+            .insert([nuevo])
+
+        if (error) {
+            console.error("Error al guardar en Supabase:", error)
+            alert("Material guardado localmente, pero fallo al guardar en Supabase. Revisa consola.")
+        } else {
+            console.log("Material guardado en Supabase:", data)
+        }
+    } catch (e) {
+        console.error("Excepción al guardar en Supabase:", e)
+    }
+
+    alert("Material guardado con código: " + codigo)
+    mostrarMateriales()
+}
+
+function mostrarMateriales() {
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let tabla = document.getElementById("tablaMateriales")
+    tabla.innerHTML = `
+    <tr>
+    <th>Código</th>
+    <th>Material</th>
+    <th>Rubro</th>
+    <th>Subclasificación</th>
+    <th>Dimensional</th>
+    <th>Descripción</th>
+    </tr>
+    `
+    materiales.forEach(m => {
+        let fila = document.createElement("tr")
+        fila.innerHTML = `
+        <td>${m.codigo}</td>
+        <td>${m.material}</td>
+        <td>${m.rubro}</td>
+        <td>${m.sub}</td>
+        <td>${m.dimensional}</td>
+        <td>${m.descripcion}</td>
+        `
+        tabla.appendChild(fila)
+    })
+}
+
+// ================== INICIALIZACIÓN ==================
+mostrarMateriales()
+</script>
+
+</body>
+</html>
