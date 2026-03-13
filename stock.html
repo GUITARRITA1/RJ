@@ -1,69 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Stock Actual</title>
-<style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: collapse; width: 80%; margin: auto; }
-    th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
-</style>
-</head>
-<body>
-
-<h2 style="text-align:center;">Stock Actual</h2>
-
-<table id="tabla">
-<tr>
-  <th>Código</th>
-  <th>Material</th>
-  <th>Stock</th>
-</tr>
-</table>
-
-<!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script>
-    const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
+<script>
+  const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // reemplaza con tu anon key
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // No usamos "const supabase" de nuevo, usamos otro nombre
+  const supabaseStock = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   async function cargarStock() {
-    const tabla = document.getElementById("tabla");
+      const tabla = document.getElementById("tabla");
 
-    try {
-      const { data, error } = await supabase
-        .from("stock_actual_mv")
-        .select("*");
+      const { data, error } = await supabaseStock
+          .from("stock_actual_mv")
+          .select("*");
 
       if (error) {
-        console.error("Error cargando stock:", error);
-        return;
+          console.error("Error cargando stock:", error);
+          return;
       }
 
-      // Limpiar tabla excepto encabezado
       tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
 
-      // Insertar filas
       data.forEach(mat => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${mat.codigo}</td>
-          <td>${mat.material}</td>
-          <td>${mat.stock}</td>
-        `;
-        tabla.appendChild(fila);
+          const fila = document.createElement("tr");
+          fila.innerHTML = `
+              <td>${mat.codigo}</td>
+              <td>${mat.material}</td>
+              <td>${mat.stock}</td>
+          `;
+          tabla.appendChild(fila);
       });
-
-    } catch (err) {
-      console.error("Fetch falló:", err);
-    }
   }
 
   cargarStock();
 </script>
-
-</body>
-</html>
