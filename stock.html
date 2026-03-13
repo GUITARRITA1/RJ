@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Stock Actual</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     table { border-collapse: collapse; width: 80%; margin: auto; }
@@ -24,21 +23,24 @@
 </tr>
 </table>
 
-<script>
-  // Inicializar Supabase solo si no existe
-  if (!window.supabase) {
-      window.supabase = supabase.createClient(
-          "https://vlvfbckdqemjghphefnx.supabase.co",
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"
-      );
-  }
+<!-- Usar la librería supabase local (descarga previamente supabase.js y colócala en js/) -->
+<script src="js/supabase.js"></script>
 
-  // Función para cargar stock desde la vista stock_actual
+<script>
+  // Inicializar Supabase (instancia separada)
+  const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+
+  const supabaseStock = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: false } // evita uso de localStorage
+  });
+
+  // Función para cargar stock
   async function cargarStock() {
       const tabla = document.getElementById("tabla");
 
       try {
-          const { data, error } = await window.supabase
+          const { data, error } = await supabaseStock
               .from("stock_actual")
               .select("*");
 
