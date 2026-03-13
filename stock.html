@@ -22,49 +22,46 @@
 </tr>
 </table>
 
-<!-- Librería Supabase -->
+<!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const SUPABASE_URL = "https://vlvfbckdqemjghphefnx.supabase.co";
+  const SUPABASE_KEY = "TU_ANON_KEY_AQUI"; // reemplaza con tu anon key
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function cargarStock() {
+  async function cargarStock() {
     const tabla = document.getElementById("tabla");
 
     try {
-        // Traer stock directamente de la tabla stock_actual
-        const { data: stockData, error } = await supabase
-            .from("stock_actual")
-            .select("codigo, materiales, stock");  // materiales = nombre del material
+      const { data, error } = await supabase
+        .from("stock_actual_mv")
+        .select("*");
 
-        if (error) {
-            console.error("Error cargando stock:", error);
-            return;
-        }
+      if (error) {
+        console.error("Error cargando stock:", error);
+        return;
+      }
 
-        // Limpiar tabla excepto encabezado
-        tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
+      // Limpiar tabla excepto encabezado
+      tabla.querySelectorAll("tr:not(:first-child)").forEach(e => e.remove());
 
-        // Mostrar cada fila
-        stockData.forEach(item => {
-            const fila = document.createElement("tr");
-            fila.innerHTML = `
-                <td>${item.codigo}</td>
-                <td>${item.materiales}</td>
-                <td>${item.stock}</td>
-            `;
-            tabla.appendChild(fila);
-        });
+      // Insertar filas
+      data.forEach(mat => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${mat.codigo}</td>
+          <td>${mat.material}</td>
+          <td>${mat.stock}</td>
+        `;
+        tabla.appendChild(fila);
+      });
 
     } catch (err) {
-        console.error("Fetch falló:", err);
+      console.error("Fetch falló:", err);
     }
-}
+  }
 
-// Ejecutar al cargar
-cargarStock();
+  cargarStock();
 </script>
 
 </body>
