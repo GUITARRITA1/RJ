@@ -48,7 +48,7 @@
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // reemplaza con tu anon key
 
     // Instancia del cliente Supabase
-    const supabaseStock = Supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseStock = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function cargarStock() {
       const tabla = document.getElementById("tabla");
