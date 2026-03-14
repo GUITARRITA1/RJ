@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Movimiento de Material</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
+  label { display: block; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div style="text-align:center; margin-bottom:20px;">
+  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+</div>
+
+<h1 style="text-align: center;">Contacto: 1158297715</h1>
+
+<div style="display: flex; justify-content: center; margin-bottom: 60px; height: 20vh;">
+  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; width:100%; height:auto;">
+</div>
+
+<h2>Entrada / Salida de Material</h2>
+
+<label>Material:</label>
+<input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
+<datalist id="materialesList"></datalist>
+
+<label>Tipo:</label>
+<select id="tipo">
+  <option value="entrada">Entrada</option>
+  <option value="salida">Salida</option>
+</select>
+
+<label>Cantidad:</label>
+<input type="number" id="cantidad">
+
+<label>Responsable:</label>
+<input id="responsable">
+
+<label>Cliente / Proveedor:</label>
+<input id="cliente">
+
+<label>Detalles adicionales:</label>
+<input id="detalles" placeholder="Ej: Dimensiones, color, notas">
+
+<button id="guardarBtn">Guardar</button>
+
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ===== Inicializar Supabase =====
+  const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+  const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+  // ===== Función para cargar materiales desde Supabase =====
+  async function cargarMateriales() {
+      const datalist = document.getElementById("materialesList");
+      datalist.innerHTML = "";
+
+      const { data: materiales, error } = await supabaseClient
+          .from("altas")
+          .select("*")
+          .order("codigo");
+
+      if(error){
+          console.error("Error cargando altas:", error);
+          return;
+      }
+
+      materiales.forEach(m => {
+          const opcion = document.createElement("option");
+          opcion.value = `${m.codigo} - ${m.material} - ${m.dimensional || ""}`;
+          datalist.appendChild(opcion);
+      });
+  }
+
+  // ===== Función para guardar movimiento =====
+  async function guardar() {
+      const input = document.getElementById("codigo").value;
+      const [codigo, materialNombre, dimensional] = input.split(" - ");
+
+      const tipo = document.getElementById("tipo").value;
+      const cantidadInput = document.getElementById("cantidad").value;
+      const cantidad = parseInt(cantidadInput);
+      const responsable = document.getElementById("responsable").value;
+      const cliente = document.getElementById("cliente").value;
+      const detalles = document.getElementById("detalles").value;
+
+      if (!codigo || !materialNombre) { alert("Selecciona un material válido"); return; }
+      if (!tipo) { alert("Selecciona un tipo"); return; }
+      if (!cantidadInput || isNaN(cantidad)) { alert("Cantidad inválida"); return; }
+      if (!responsable) { alert("Ingresa el responsable"); return; }
+      if (!cliente) { alert("Ingresa el cliente/proveedor"); return; }
+
+      const { data, error } = await supabaseClient
+        .from("movimientos")
+        .insert([{
+          codigo,
+          material: materialNombre,
+          tipo,
+          cantidad,
+          responsable,
+          cliente,
+          detalles,
+          fecha: new Date().toISOString()
+        }]);
+
+      if (error) {
+          console.error("Error al guardar:", error);
+          alert("Error al guardar, revisa la consola");
+      } else {
+          alert("Movimiento guardado correctamente");
+          // Limpiar campos
+          document.getElementById("codigo").value = "";
+          document.getElementById("tipo").value = "entrada";
+          document.getElementById("cantidad").value = "";
+          document.getElementById("responsable").value = "";
+          document.getElementById("cliente").value = "";
+          document.getElementById("detalles").value = "";
+          cargarMateriales(); // recarga el desplegable
+      }
+  }
+
+  // ===== Eventos =====
+  document.addEventListener("DOMContentLoaded", cargarMateriales);
+  document.getElementById("guardarBtn").addEventListener("click", guardar);
+</script>
+
+</body>
+</html>
