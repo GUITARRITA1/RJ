@@ -132,30 +132,45 @@ async function agregarMaterial() {
     mostrarMateriales()
 }
 
-function mostrarMateriales() {
-    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
-    let tabla = document.getElementById("tablaMateriales")
-    tabla.innerHTML = `
-    <tr>
-    <th>Código</th>
-    <th>Material</th>
-    <th>Rubro</th>
-    <th>Subclasificación</th>
-    <th>Dimensional</th>
-    <th>Descripción</th>
-    </tr>
-    `
-    materiales.forEach(m => {
-        let fila = document.createElement("tr")
-        fila.innerHTML = `
-        <td>${m.codigo}</td>
-        <td>${m.material}</td>
-        <td>${m.rubro}</td>
-        <td>${m.sub}</td>
-        <td>${m.dimensional}</td>
-        <td>${m.descripcion}</td>
-        `
-        tabla.appendChild(fila)
+async function cargarMateriales(){
+
+const { data , error } = await supabaseClient
+.from("altas")
+.select("*")
+.order("codigo")
+
+if(error){
+console.log(error)
+return
+}
+
+let tabla = document.getElementById("tablaMateriales")
+
+tabla.innerHTML = `
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Rubro</th>
+<th>Subclasificación</th>
+<th>Dimensional</th>
+<th>Descripción</th>
+</tr>
+`
+
+data.forEach(m=>{
+
+let fila=document.createElement("tr")
+
+fila.innerHTML=`
+<td>${m.codigo}</td>
+<td>${m.material}</td>
+<td>${m.rubro}</td>
+<td>${m.sub}</td>
+<td>${m.dimensional}</td>
+<td>${m.descripcion}</td>
+`
+
+tabla.appendChild(fila)
     })
 }
 
