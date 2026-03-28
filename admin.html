@@ -5,6 +5,18 @@
 <title>Administrador - Inventario</title>
 <!-- SUPABASE -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+ <style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
+  label { display: block; margin-top: 10px; }
+/* AGREGAR AL FINAL de tu <style> */
+.login-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; }
+.login-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin: 10px 0; }
+.login-btn { background: #2196f3; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+.login-btn:hover { background: #1976d2; }
+.content-hidden { display: none; }
+  </style>
 </head>
 
 <body>
