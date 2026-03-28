@@ -206,6 +206,57 @@ tabla.appendChild(fila)
 
 // ================== INICIALIZACIÓN ==================
 // cargarMateriales()
+
+ // 🔐 LOGIN USUARIO - AGREGAR ANTES del último < /script>
+let userAuthenticated = false;
+
+function userLogin() {
+    const username = document.getElementById('loginUser').value;
+    const password = document.getElementById('loginPass').value;
+    
+    if (username === 'refrijul' && password === 'rj007') {
+        userAuthenticated = true;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.querySelector('.content-hidden').classList.remove('content-hidden');
+        document.body.style.overflow = 'auto'; // Habilita scroll
+        cargarMateriales(); // Carga tu función existente
+    } else {
+        alert('❌ Usuario o contraseña incorrecta\nrefrijul / rj007');
+    }
+}
+
+// PROTEGER - MODIFICAR tu función cargarMateriales()
+async function cargarMateriales() {
+    if (!userAuthenticated) {
+        document.getElementById('loginScreen').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Deshabilita scroll
+        return;
+    }
+    // ... TU CÓDIGO EXISTENTE de cargarMateriales() ...
+}
+
+// PROTEGER - MODIFICAR tu función guardar()
+async function guardar() {
+    if (!userAuthenticated) {
+        alert('❌ Debes iniciar sesión');
+        return;
+    }
+    // ... TU CÓDIGO EXISTENTE de guardar() ...
+}
+
+// MOSTRAR LOGIN al cargar
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+});
+
+// Enter para login
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !userAuthenticated) {
+        userLogin();
+    }
+});
+
 </script>
 </body>
 </html>
