@@ -17,20 +17,22 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 .login-btn { background: #2196f3; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
 .login-btn:hover { background: #1976d2; }
 .content-hidden { display: none; }
-  </style>
-</head>
-
-<body>
-  <!-- imagen de fondo -->
-  body { font-family: Arial, sans-serif; 
-    margin: 0;
-    background: 
-        linear-gradient(rgba(33,150,243,0.8), rgba(33,150,243,0.8)),
-        url('fondo.jpg');
+ 
+/* DESPUÉS login - FONDO */
+ body.logged-in {
+    background-image: url('fondo.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    min-height: 100vh; }
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+ 
+ </style>
+</head>
+
+<body>
+ 
 <!-- 🔐 LOGIN - AGREGAR AQUÍ -->
 <div id="loginScreen" class="login-screen">
     <div class="login-box">
