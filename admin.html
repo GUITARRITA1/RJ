@@ -232,28 +232,15 @@ function userLogin() {
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
         document.body.style.overflow = 'auto'; // Habilita scroll
+         // ✅ ACTIVAR FONDO
+        document.body.classList.add('logged-in');
         cargarMateriales(); // Carga tu función existente
     } else {
         alert('❌ Usuario o contraseña incorrecta refrijul ');
     }
 }
 
-function userLogin() {  // O adminLogin()
-    const username = document.getElementById('loginUser').value;
-    const password = document.getElementById('loginPass').value;
-    
-    if (username === 'tecnico1' && password === 'tecni001') {
-        // ✅ ACTIVAR FONDO
-        document.body.classList.add('logged-in');
-        
-        // Tu código existente
-        document.getElementById('loginScreen').style.display = 'none';
-        document.querySelector('.content-hidden').classList.remove('content-hidden');
-        
-    } else {
-        alert('❌ Credenciales incorrectas');
-    }
-}
+
 
 function logout() {
     // ✅ QUITAR FONDO
