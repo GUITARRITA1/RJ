@@ -27,8 +27,26 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
     background-attachment: fixed;
     min-height: 100vh;
 }
-  
-<!-- para la tabla -->
+
+
+  /* TITULOS INPUTS - Turquesa como tabla */
+label[for="material"],
+label[for="rubro"],
+label[for="sub"],
+label[for="dimensional"],
+label[for="descripcion"] {
+    display: block;
+    background: #26a69a;         /* ✅ TURQUESA */
+    color: white;
+    padding: 14px 16px;
+    margin: 20px 0 10px 0;      /* ✅ CENTRADO vertical */
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(38,166,154,0.3);
+    width: fit-content;         /* ✅ Solo ancho texto */
+}
+
+  <!-- para la tabla lista de materiales -->
   #tablaMateriales {
     width: 95%;
     margin: 25px auto;           /* ✅ CENTRADO */
