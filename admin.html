@@ -58,7 +58,19 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 #tablaMateriales tr:hover {
     background: #e1f5fe;         /* ✅ Hover */
 }
-    
+
+
+/* TÍTULOS AUTOMÁTICOS para inputs */
+input {
+    margin-top: 45px !important;
+}
+
+body :where(h3, p, span, div):has(+ input),
+body :where(h3, p, span, div):has(+ input::before) {
+    background: #26a69a !important;
+    color: white
+
+  
  </style>
 </head>
 
@@ -97,7 +109,8 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 <h2>Alta de Material</h2>
 
 
-<span style="
+ 
+ < span style="
     display: block;
     background: #26a69a;
     color: white;
@@ -107,18 +120,10 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
     font-weight: bold;
     box-shadow: 0 6px 20px rgba(38,166,154,0.4);
     width: fit-content;
-">📦 Material</span>
-
+">📦 Material</span> 
  
 Material
-<input id="material" style=" background: #26a69a ;
-    width: fit-content;
-    color: white ;
-    padding: 12px 18px ;
-    margin-bottom: 5px !important;
-    border-radius: 10px !important;
-    display: block !important;
-    box-shadow: 0 4px 15px rgba(38,166,154,0.3) !important;"><br><br>
+<input id="material" style=" background: #26a69a ;"><br><br>
 
 Rubro
 <input id="rubro"><br><br>
