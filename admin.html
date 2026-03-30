@@ -7,6 +7,27 @@
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
  <style>
 
+ /* TITULOS DE INPUTS - Turquesa como tu tabla */
+    #material::before, #rubro::before, #sub::before, 
+    #dimensional::before, #descripcion::before {
+        content: attr(placeholder); /* Usa placeholder como título */
+        display: block;
+        background: #26a69a;
+        color: white;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+        width: fit-content;
+    }
+    
+    /* Ocultar placeholder real */
+    #material::placeholder, #rubro::placeholder, #sub::placeholder,
+    #dimensional::placeholder, #descripcion::placeholder {
+        opacity: 0;
+    }
+  
   body { font-family: Arial, sans-serif; margin: 20px; }
   input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
   label { display: block; margin-top: 10px; }
