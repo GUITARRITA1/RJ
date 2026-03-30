@@ -28,24 +28,6 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
     min-height: 100vh;
 }
 
-
-  /* TITULOS INPUTS - Turquesa como tabla */
-label[for="material"],
-label[for="rubro"],
-label[for="sub"],
-label[for="dimensional"],
-label[for="descripcion"] {
-    display: block;
-    background: #26a69a;         /* ✅ TURQUESA */
-    color: white;
-    padding: 14px 16px;
-    margin: 20px 0 10px 0;      /* ✅ CENTRADO vertical */
-    border-radius: 10px;
-    font-weight: bold;
-    box-shadow: 0 5px 15px rgba(38,166,154,0.3);
-    width: fit-content;         /* ✅ Solo ancho texto */
-}
-
   <!-- para la tabla lista de materiales -->
   #tablaMateriales {
     width: 95%;
@@ -128,6 +110,79 @@ Dimensional
 Descripción adicional
 <input id="descripcion"><br><br>
 
+       <style>
+        /* ANTES de cada input - Texto turquesa */
+#material, #rubro, #sub, #dimensional, #descripcion {
+    margin-top: 25px;  /* Espacio arriba */
+}
+
+/* Títulos con ::before (funciona sin label) */
+#material::before {
+    content: "📦 Material";
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 12px 16px;
+    margin: 15px 0 5px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+    width: fit-content;
+}
+
+#rubro::before {
+    content: "🏷️ Rubro";
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 12px 16px;
+    margin: 15px 0 5px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+    width: fit-content;
+}
+
+#sub::before {
+    content: "📋 Subclasificación";
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 12px 16px;
+    margin: 15px 0 5px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+    width: fit-content;
+}
+
+#dimensional::before {
+    content: "📏 Dimensional";
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 12px 16px;
+    margin: 15px 0 5px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+    width: fit-content;
+}
+
+#descripcion::before {
+    content: "📝 Descripción adicional";
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 12px 16px;
+    margin: 15px 0 5px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+    width: fit-content;
+}
+       </style>
+ 
 <button onclick="agregarMaterial()">Guardar Material</button>
 
 <hr>
