@@ -58,6 +58,29 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 #tablaMateriales tr:hover {
     background: #e1f5fe;         /* ✅ Hover */
 }
+
+/* inputs
+  <!-- PEGAR ANTES de </body> o en <style> -->*/
+    /* TUS INPUTS REALES */
+    #codigoMaterial::before, #nombreMaterial::before,
+    #rubroMaterial::before, #subclasificacion::before,
+    #dimensionalMaterial::before, #descripcionMaterial::before {
+        content: attr(placeholder);
+        display: block;
+        background: #26a69a;
+        color: white;
+        padding: 12px 16px;
+        margin: 15px 0 5px 0;
+        border-radius: 8px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(38,166,154,0.3);
+        width: fit-content;
+        font-size: 14px;
+    }
+    
+    /* Quitar placeholder original */
+    #codigoMaterial::placeholder, #nombreMaterial::placeholder { opacity: 0; }
+  
  </style>
 </head>
 
@@ -110,79 +133,6 @@ Dimensional
 Descripción adicional
 <input id="descripcion"><br><br>
 
-       <style>
-        /* ANTES de cada input - Texto turquesa */
-#material, #rubro, #sub, #dimensional, #descripcion {
-    margin-top: 25px;  /* Espacio arriba */
-}
-
-/* Títulos con ::before (funciona sin label) */
-#material::before {
-    content: "📦 Material";
-    display: block;
-    background: #26a69a;
-    color: white;
-    padding: 12px 16px;
-    margin: 15px 0 5px 0;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
-    width: fit-content;
-}
-
-#rubro::before {
-    content: "🏷️ Rubro";
-    display: block;
-    background: #26a69a;
-    color: white;
-    padding: 12px 16px;
-    margin: 15px 0 5px 0;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
-    width: fit-content;
-}
-
-#sub::before {
-    content: "📋 Subclasificación";
-    display: block;
-    background: #26a69a;
-    color: white;
-    padding: 12px 16px;
-    margin: 15px 0 5px 0;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
-    width: fit-content;
-}
-
-#dimensional::before {
-    content: "📏 Dimensional";
-    display: block;
-    background: #26a69a;
-    color: white;
-    padding: 12px 16px;
-    margin: 15px 0 5px 0;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
-    width: fit-content;
-}
-
-#descripcion::before {
-    content: "📝 Descripción adicional";
-    display: block;
-    background: #26a69a;
-    color: white;
-    padding: 12px 16px;
-    margin: 15px 0 5px 0;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(38,166,154,0.3);
-    width: fit-content;
-}
-       </style>
- 
 <button onclick="agregarMaterial()">Guardar Material</button>
 
 <hr>
