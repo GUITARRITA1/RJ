@@ -185,7 +185,8 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 
      <h2>Lista de Materiales</h2>
    <table border="1" id="tablaMateriales">
-   <tr>
+       <thead>
+<tr>
    <th>Código</th>
    <th>Material</th>
    <th>Rubro</th>
@@ -193,6 +194,10 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
    <th>Dimensional</th>
    <th>Descripción</th>
    </tr>
+      </thead>
+ <tbody id="tablaMaterialesBody">
+        <tr><td colspan="6" style="text-align:center">Cargando...</td></tr>
+    </tbody>
    </table>
 
 <hr>
