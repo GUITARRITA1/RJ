@@ -199,14 +199,16 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 
 <script>
 // ================== SUPABASE ==================
-const { createClient } = supabase
-const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co"; // Reemplaza con tu URL
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // Reemplaza con tu anon key
-const supabaseClient = createClient(
-supabaseUrl,
-supabaseKey
-)
-// ================== FUNCIONES PARA codigo MATERIALES ==================
+
+
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ================== SUPABASE ==================
+const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+// ================== FUNCIONES ==================
 function generarCodigo(rubro, sub) {
     let materiales = JSON.parse(localStorage.getItem("materiales")) || []
     let prefijo = rubro.substring(0, 2).toUpperCase() + sub.substring(0, 2).toUpperCase()
@@ -241,12 +243,10 @@ async function agregarMaterial() {
         descripcion: descripcion,
     }
 
-    // ====== GUARDAR EN LOCALSTORAGE ======
     let materiales = JSON.parse(localStorage.getItem("materiales")) || []
     materiales.push(nuevo)
     localStorage.setItem("materiales", JSON.stringify(materiales))
 
-    // ====== GUARDAR EN SUPABASE ======
     try {
         const { data, error } = await supabaseClient
             .from("altas")
@@ -254,7 +254,7 @@ async function agregarMaterial() {
 
         if (error) {
             console.error("Error al guardar en Supabase:", error)
-            alert("Material guardado localmente, pero fallo al guardar en Supabase. Revisa consola.")
+            alert("Material guardado localmente, pero fallo al guardar en Supabase.")
         } else {
             console.log("Material guardado en Supabase:", data)
         }
@@ -263,55 +263,48 @@ async function agregarMaterial() {
     }
 
     alert("Material guardado con código: " + codigo)
-}
-   
- //mostrarMateriales()
-async function cargarMateriales(){
-
-const { data , error } = await supabaseClient
-.from("altas")
-.select("*")
-.order("codigo")
-
-if(error){
-console.log(error)
-return
+    cargarMateriales() // Recargar la tabla
 }
 
-let tabla = document.getElementById("tablaMateriales")
+async function cargarMateriales() {
+    if (!userAuthenticated) return;
+    
+    const { data, error } = await supabaseClient
+        .from("altas")
+        .select("*")
+        .order("codigo")
 
-tabla.innerHTML = `
-<tr>
-<th>Código</th>
-<th>Material</th>
-<th>Rubro</th>
-<th>Subclasificación</th>
-<th>Dimensional</th>
-<th>Descripción</th>
-</tr>
-`
+    if (error) {
+        console.log(error)
+        return
+    }
 
-data.forEach(m=>{
-
-let fila=document.createElement("tr")
-
-fila.innerHTML=`
-<td>${m.codigo}</td>
-<td>${m.material}</td>
-<td>${m.rubro}</td>
-<td>${m.sub}</td>
-<td>${m.dimensional}</td>
-<td>${m.descripcion}</td>
-`
-
-tabla.appendChild(fila)
+    let tabla = document.getElementById("tablaMateriales")
+    
+    // Buscar o crear el tbody
+    let tbody = tabla.querySelector("tbody")
+    if (!tbody) {
+        tbody = document.createElement("tbody")
+        tabla.appendChild(tbody)
+    }
+    
+    // Limpiar y agregar filas
+    tbody.innerHTML = ""
+    data.forEach(m => {
+        let fila = document.createElement("tr")
+        fila.innerHTML = `
+            <td>${m.codigo || ''}</td>
+            <td>${m.material || ''}</td>
+            <td>${m.rubro || ''}</td>
+            <td>${m.sub || ''}</td>
+            <td>${m.dimensional || ''}</td>
+            <td>${m.descripcion || ''}</td>
+        `
+        tbody.appendChild(fila)
     })
 }
 
-// ================== INICIALIZACIÓN ==================
-cargarMateriales()
-
- // 🔐 LOGIN USUARIO - AGREGAR ANTES del último < /script>
+// ================== LOGIN ==================
 let userAuthenticated = false;
 
 function userLogin() {
@@ -322,46 +315,22 @@ function userLogin() {
         userAuthenticated = true;
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
-        document.body.style.overflow = 'auto'; // Habilita scroll
-         // ✅ ACTIVAR FONDO
+        document.body.style.overflow = 'auto';
         document.body.classList.add('logged-in');
-        cargarMateriales(); // Carga tu función existente
+        cargarMateriales();
     } else {
-        alert('❌ Usuario o contraseña incorrecta refrijul ');
+        alert('❌ Usuario o contraseña incorrecta');
     }
 }
-
-
 
 function logout() {
-    // ✅ QUITAR FONDO
     document.body.classList.remove('logged-in');
-    
-    // Tu código existente
     document.getElementById('loginScreen').style.display = 'block';
     document.querySelector('.content-hidden').classList.add('content-hidden');
-}
- 
-// PROTEGER - MODIFICAR tu función cargarMateriales()
-async function cargarMateriales() {
-    if (!userAuthenticated) {
-        document.getElementById('loginScreen').style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Deshabilita scroll
-        return;
-    }
-    // ... TU CÓDIGO EXISTENTE de cargarMateriales() ...
+    userAuthenticated = false;
 }
 
-// PROTEGER - MODIFICAR tu función guardar()
-async function guardar() {
-    if (!userAuthenticated) {
-        alert('❌ Debes iniciar sesión');
-        return;
-    }
-    // ... TU CÓDIGO EXISTENTE de guardar() ...
-}
-
-// MOSTRAR LOGIN al cargar
+// Mostrar login al cargar
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('loginScreen').style.display = 'block';
     document.body.style.overflow = 'hidden';
@@ -373,7 +342,4 @@ document.addEventListener('keypress', function(e) {
         userLogin();
     }
 });
-
 </script>
-</body>
-</html>
