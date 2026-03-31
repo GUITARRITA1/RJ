@@ -177,25 +177,23 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
 
 <hr>
 
-<!--
-  <a href="histo.html">-->
-<button>Consultar HISTORIAL </button>
-</a>
+   <!--
+      <a href="histo.html">-->
+    <button>Consultar HISTORIAL </button>
+      </a>
+      <br><br>
 
-  
-<br><br>
-
-<h2>Lista de Materiales</h2>
-<table border="1" id="tablaMateriales">
-<tr>
-<th>Código</th>
-<th>Material</th>
-<th>Rubro</th>
-<th>Subclasificación</th>
-<th>Dimensional</th>
-<th>Descripción</th>
-</tr>
-</table>
+     <h2>Lista de Materiales</h2>
+   <table border="1" id="tablaMateriales">
+   <tr>
+   <th>Código</th>
+   <th>Material</th>
+   <th>Rubro</th>
+   <th>Subclasificación</th>
+   <th>Dimensional</th>
+   <th>Descripción</th>
+   </tr>
+   </table>
 
 <hr>
 
@@ -208,7 +206,7 @@ const supabaseClient = createClient(
 supabaseUrl,
 supabaseKey
 )
-// ================== FUNCIONES PARA MATERIALES ==================
+// ================== FUNCIONES PARA codigo MATERIALES ==================
 function generarCodigo(rubro, sub) {
     let materiales = JSON.parse(localStorage.getItem("materiales")) || []
     let prefijo = rubro.substring(0, 2).toUpperCase() + sub.substring(0, 2).toUpperCase()
