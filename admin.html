@@ -272,6 +272,19 @@ const { data , error } = await supabaseClient
 .from("altas")
 .select("*")
 .order("codigo")
+const tbody = document.querySelector("#tablaMateriales tbody") || (() => {
+      const tbody = document.createElement("tbody");
+      document.querySelector("#tablaMateriales").appendChild(tbody);
+      return tbody;
+    })();
+    tbody.innerHTML = data.map(m => `
+       <tr>
+         <td>${m.codigo}</td><td>${m.material}</td>
+         <td>${m.rubro}</td><td>${m.sub}</td>
+         <td>${m.dimensional}</td><td>${m.descripcion}</td>
+       </tr>
+    `).join('');
+  }
 
 if(error){
 console.log(error)
