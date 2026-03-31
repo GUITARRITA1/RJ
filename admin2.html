@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Administrador - Inventario</title>
+<!-- SUPABASE -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+ <style>
+
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
+  label { display: block; margin-top: 10px; }
+/* AGREGAR AL FINAL de tu <style> */
+.login-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; }
+.login-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin: 10px 0; }
+.login-btn { background: #2196f3; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+.login-btn:hover { background: #1976d2; }
+.content-hidden { display: none; }
+ 
+/* DESPUÉS login - FONDO */
+ body.logged-in {
+    background-image: url('fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+  <!-- para la tabla lista de materiales -->
+  #tablaMateriales {
+    width: 95%;
+    margin: 25px auto;           /* ✅ CENTRADO */
+    border-radius: 12px;         /* ✅ RECUADRO */
+    overflow: hidden;           /* ✅ Bordes perfectos */
+    border: none;               /* Quita border="1" feo */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    background: white;
+}
+
+#tablaMateriales th {
+    background: #26a69a;         /* ✅ TURQUESA */
+    color: white;
+    padding: 16px 12px;
+    font-weight: bold;
+    text-align: left;
+    border: none;
+}
+
+#tablaMateriales td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e0f2f1; /* ✅ Línea turquesa */
+    border-left: none;
+    border-right: none;
+}
+
+#tablaMateriales tr:hover {
+    background: #e1f5fe;         /* ✅ Hover */
+}
+
+  
+ </style>
+</head>
+
+<body>
+ 
+<!-- 🔐 LOGIN - AGREGAR AQUÍ -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <h2 style="text-align: center; color: #2196f3;">👤 Módulo Administrador</h2>
+        <p style="text-align: center; color: #666;">Refrigeración TRUCK - by CoAtom</p>
+        <input type="text" id="loginUser" placeholder="Usuario">
+        <input type="password" id="loginPass" placeholder="Contraseña">
+        <br>
+        <button class="login-btn" onclick="userLogin()">Acceder</button>
+    </div>
+</div>
+
+<!-- TU CONTENIDO EXISTENTE - AGREGAR class="content-hidden" a tu PRIMER div -->
+<div class="content-hidden" style="text-align:center; margin-bottom:20px;">
+  <!-- Logo Principal -->
+ <div style="text-align:center; margin-bottom:20px;">
+  <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+</div>
+
+  <div style="
+    display: flex;
+    justify-content: center; /* centra horizontalmente */
+   margin-bottom: 5px;
+  //align-items: flex-end;   /* alinea abajo del contenedor */
+    height: 5vh;           /* ocupa toda la altura de la ventana */
+">
+  <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:500px; width:100%; height:100px;">
+</div>
+    <h1 style="text-align: center;">Contacto: 1158297715</h1>
+
+<h2 style="color: #26a69a;">Alta de Material</h2>
+
+<div style="display: flex; margin-bottom:25px; align-items: center; gap:5px;">
+ <span style="
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 14px 20px;
+    margin: 20px 0 10px 0;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(38,166,154,0.4);
+    width: fit-content;
+">📦 Material</span>
+<input id="material" style="border-radius: 10px;"><br><br>
+</div>
+
+<div style="display: flex; margin-bottom:25px; align-items: center; gap:5px;">
+ <span style="
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 14px 20px;
+    margin: 20px 0 10px 0;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(38,166,154,0.4);
+    width: fit-content;
+">📦 Rubro</span>
+ 
+<input id="rubro" style="border-radius: 10px;"><br><br>
+</div>
+
+<div style="display: flex; margin-bottom:25px; align-items: center; gap:5px;">
+ <span style="
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 14px 20px;
+    margin: 20px 0 10px 0;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(38,166,154,0.4);
+    width: fit-content;
+">📦 Subclasificación</span>
+<input id="sub" style="border-radius: 10px;"><br><br>
+</div>
+
+<div style="display: flex; margin-bottom:25px; align-items: center; gap:5px;">
+ <span style="
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 14px 20px;
+    margin: 20px 0 10px 0;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(38,166,154,0.4);
+    width: fit-content;
+">📦 Dimensional</span>
+<input id="dimensional" style="border-radius: 10px;"><br><br>
+</div>
+
+ <div style="display: flex; margin-bottom:25px; align-items: center; gap:5px;">
+ <span style="
+    display: block;
+    background: #26a69a;
+    color: white;
+    padding: 14px 20px;
+    margin: 20px 0 10px 0;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 6px 20px rgba(38,166,154,0.4);
+    width: fit-content;
+">📦 Descripción adicional</span>
+<input id="descripcion" style="border-radius: 10px;"><br><br>
+</div>
+ 
+<button onclick="agregarMaterial()">Guardar Material</button>
+
+<hr>
+
+   <!--
+      <a href="histo.html">-->
+    <button>Consultar HISTORIAL </button>
+      </a>
+      <br><br>
+
+     <h2>Lista de Materiales</h2>
+   <table border="1" id="tablaMateriales">
+   <tr>
+   <th>Código</th>
+   <th>Material</th>
+   <th>Rubro</th>
+   <th>Subclasificación</th>
+   <th>Dimensional</th>
+   <th>Descripción</th>
+   </tr>
+   </table>
+
+<hr>
+
+<script>
+// ================== SUPABASE ==================
+const { createClient } = supabase
+const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co"; // Reemplaza con tu URL
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM"; // Reemplaza con tu anon key
+const supabaseClient = createClient(
+supabaseUrl,
+supabaseKey
+)
+// ================== FUNCIONES PARA codigo MATERIALES ==================
+function generarCodigo(rubro, sub) {
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    let prefijo = rubro.substring(0, 2).toUpperCase() + sub.substring(0, 2).toUpperCase()
+    let contador = 1
+    materiales.forEach(m => {
+        if (m.codigo.startsWith(prefijo)) contador++
+    })
+    let numero = contador.toString().padStart(6, "0")
+    return prefijo + numero
+}
+
+async function agregarMaterial() {
+    let material = document.getElementById("material").value
+    let rubro = document.getElementById("rubro").value
+    let sub = document.getElementById("sub").value
+    let dimensional = document.getElementById("dimensional").value
+    let descripcion = document.getElementById("descripcion").value
+
+    if (!material || !rubro || !sub) {
+        alert("Material, Rubro y Subclasificación son obligatorios")
+        return
+    }
+
+    let codigo = generarCodigo(rubro, sub)
+
+    let nuevo = {
+        codigo: codigo,
+        material: material,
+        rubro: rubro,
+        sub: sub,
+        dimensional: dimensional,
+        descripcion: descripcion,
+    }
+
+    // ====== GUARDAR EN LOCALSTORAGE ======
+    let materiales = JSON.parse(localStorage.getItem("materiales")) || []
+    materiales.push(nuevo)
+    localStorage.setItem("materiales", JSON.stringify(materiales))
+
+    // ====== GUARDAR EN SUPABASE ======
+    try {
+        const { data, error } = await supabaseClient
+            .from("altas")
+            .insert([nuevo])
+
+        if (error) {
+            console.error("Error al guardar en Supabase:", error)
+            alert("Material guardado localmente, pero fallo al guardar en Supabase. Revisa consola.")
+        } else {
+            console.log("Material guardado en Supabase:", data)
+        }
+    } catch (e) {
+        console.error("Excepción al guardar en Supabase:", e)
+    }
+
+    alert("Material guardado con código: " + codigo)
+}
+   
+ //mostrarMateriales()
+async function cargarMateriales(){
+
+const { data , error } = await supabaseClient
+.from("altas")
+.select("*")
+.order("codigo")
+
+if(error){
+console.log(error)
+return
+}
+
+let tabla = document.getElementById("tablaMateriales")
+
+tabla.innerHTML = `
+<tr>
+<th>Código</th>
+<th>Material</th>
+<th>Rubro</th>
+<th>Subclasificación</th>
+<th>Dimensional</th>
+<th>Descripción</th>
+</tr>
+`
+
+data.forEach(m=>{
+
+let fila=document.createElement("tr")
+
+fila.innerHTML=`
+<td>${m.codigo}</td>
+<td>${m.material}</td>
+<td>${m.rubro}</td>
+<td>${m.sub}</td>
+<td>${m.dimensional}</td>
+<td>${m.descripcion}</td>
+`
+
+tabla.appendChild(fila)
+    })
+}
+
+// ================== INICIALIZACIÓN ==================
+cargarMateriales()
+
+ // 🔐 LOGIN USUARIO - AGREGAR ANTES del último < /script>
+let userAuthenticated = false;
+
+function userLogin() {
+    const username = document.getElementById('loginUser').value;
+    const password = document.getElementById('loginPass').value;
+    
+    if (username === 'refrijul' && password === 'rj007') {
+        userAuthenticated = true;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.querySelector('.content-hidden').classList.remove('content-hidden');
+        document.body.style.overflow = 'auto'; // Habilita scroll
+         // ✅ ACTIVAR FONDO
+        document.body.classList.add('logged-in');
+        cargarMateriales(); // Carga tu función existente
+    } else {
+        alert('❌ Usuario o contraseña incorrecta refrijul ');
+    }
+}
+
+
+
+function logout() {
+    // ✅ QUITAR FONDO
+    document.body.classList.remove('logged-in');
+    
+    // Tu código existente
+    document.getElementById('loginScreen').style.display = 'block';
+    document.querySelector('.content-hidden').classList.add('content-hidden');
+}
+ 
+// PROTEGER - MODIFICAR tu función cargarMateriales()
+async function cargarMateriales() {
+    if (!userAuthenticated) {
+        document.getElementById('loginScreen').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Deshabilita scroll
+        return;
+    }
+    // ... TU CÓDIGO EXISTENTE de cargarMateriales() ...
+}
+
+// PROTEGER - MODIFICAR tu función guardar()
+async function guardar() {
+    if (!userAuthenticated) {
+        alert('❌ Debes iniciar sesión');
+        return;
+    }
+    // ... TU CÓDIGO EXISTENTE de guardar() ...
+}
+
+// MOSTRAR LOGIN al cargar
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+});
+
+// Enter para login
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !userAuthenticated) {
+        userLogin();
+    }
+});
+
+</script>
+</body>
+</html>
