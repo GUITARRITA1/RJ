@@ -278,17 +278,22 @@ async function agregarMaterial() {
 }
 
 async function borrarMaterial(codigo) {
-    if (!confirm("¿Eliminar este material?")) return;
+    if (!confirm("¿Eliminar este material con código: " + codigo + "?")) return;
     
-    const { error } = await supabaseClient
+    console.log("Intentando eliminar código:", codigo);
+    
+    const { data, error } = await supabaseClient
         .from("altas")
         .delete()
-        .eq("codigo", codigo);
+        .eq("codigo", codigo)
+        .select();
     
     if (error) {
+        console.error("Error detallado:", error);
         alert("Error: " + error.message);
     } else {
-        alert("Eliminado");
+        console.log("Eliminado:", data);
+        alert("Material eliminado correctamente");
         cargarMateriales(); // recarga la tabla
     }
 }
