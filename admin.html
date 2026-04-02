@@ -273,14 +273,14 @@ async function agregarMaterial() {
         console.error("Excepción al guardar en Supabase:", e)
     }
 
-    alert("Material guardado con código: " + codigo)
-        // Vaciar todos los campos
+  // Vaciar todos los campos
 document.getElementById("material").value = ""
 document.getElementById("rubro").value = ""
 document.getElementById("sub").value = ""
 document.getElementById("dimensional").value = ""
 document.getElementById("descripcion").value = ""
  
+    alert("Material guardado con código: " + codigo)
     cargarMateriales() // Recargar la tabla
 }
 
