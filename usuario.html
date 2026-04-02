@@ -1,3 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<title>Movimiento de Material</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
+label { display: block; margin-top: 10px; }
+
+.login-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; }
+.login-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin: 10px 0; }
+.login-btn { background: #2196f3; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+.login-btn:hover { background: #1976d2; }
+.content-hidden { display: none; }
+
+body.logged-in {
+    background-image: url('fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <h2 style="text-align: center; color: #2196f3;">👤 Módulo Usuario</h2>
+        <p style="text-align: center; color: #666;">Refrigeración TRUCK - by CoAtom</p>
+        <input type="text" id="loginUser" placeholder="Usuario">
+        <input type="password" id="loginPass" placeholder="Contraseña">
+        <br>
+        <button class="login-btn" onclick="userLogin()">Acceder</button>
+    </div>
+</div>
+
+<div class="content-hidden" style="text-align:center; margin-bottom:20px;">
+ 
+    <div style="text-align:center; margin-bottom:20px;">
+        <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+    </div>
+
+    <div style="display: flex; justify-content: center; margin-bottom: 5px; height: 5vh;">
+        <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:500px; width:100%; height:100px;">
+    </div>
+    
+    <h1 style="text-align: center;">Contacto: 1158297715</h1>
+
+    <h2>Entrada / Salida de Material</h2>
+
+    <label>Material:</label>
+    <input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
+    <datalist id="materialesList"></datalist>
+
+    <label>Tipo:</label>
+    <select id="tipo">
+        <option value="entrada">Entrada</option>
+        <option value="salida">Salida</option>
+    </select>
+
+    <label>Cantidad:</label>
+    <input type="number" id="cantidad">
+
+    <label>Responsable:</label>
+    <input id="responsable">
+
+    <label>Cliente / Proveedor:</label>
+    <input id="cliente">
+
+    <label>Detalles adicionales:</label>
+    <input id="detalles" placeholder="Ej: Dimensiones, color, notas">
+
+    <button id="guardarBtn">Guardar</button>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
 // ===== Inicializar Supabase =====
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
@@ -5,7 +89,7 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 let userAuthenticated = false;
 
-// ===== Función para cargar materiales desde Supabase (ÚNICA VERSIÓN) =====
+// ===== Función para cargar materiales desde Supabase =====
 async function cargarMateriales() {
     if (!userAuthenticated) {
         return;
@@ -33,7 +117,7 @@ async function cargarMateriales() {
     });
 }
 
-// ===== Función para guardar movimiento (ÚNICA VERSIÓN) =====
+// ===== Función para guardar movimiento =====
 async function guardar() {
     if (!userAuthenticated) {
         alert('❌ Debes iniciar sesión');
@@ -44,7 +128,6 @@ async function guardar() {
     const partes = input.split(" - ");
     const codigo = partes[0];
     const materialNombre = partes[1];
-    const dimensional = partes[2] || "";
 
     const tipo = document.getElementById("tipo").value;
     const cantidadInput = document.getElementById("cantidad").value;
@@ -92,7 +175,6 @@ async function guardar() {
         alert("Error al guardar: " + error.message);
     } else {
         alert("Movimiento guardado correctamente");
-        // Limpiar campos
         document.getElementById("codigo").value = "";
         document.getElementById("tipo").value = "entrada";
         document.getElementById("cantidad").value = "";
@@ -112,6 +194,7 @@ function userLogin() {
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
         document.body.style.overflow = 'auto';
+        document.body.classList.add('logged-in');
         cargarMateriales();
     } else {
         alert('❌ Usuario o contraseña incorrecta');
@@ -124,12 +207,14 @@ document.addEventListener("DOMContentLoaded", function() {
     document.body.style.overflow = 'hidden';
 });
 
-// Asignar evento al botón guardar
 document.getElementById("guardarBtn").addEventListener("click", guardar);
 
-// Enter para login
 document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter' && !userAuthenticated) {
         userLogin();
     }
 });
+</script>
+
+</body>
+</html>
