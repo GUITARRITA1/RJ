@@ -240,7 +240,11 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('loginScreen').style.display = 'block';
     document.body.style.overflow = 'hidden';
 });
-
+// Evento para filtrar mientras escribe
+document.getElementById("codigo").addEventListener("input", function(e) {
+    actualizarSugerencias(e.target.value);
+});
+  
 // Enter para login
 document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter' && !userAuthenticated) {
