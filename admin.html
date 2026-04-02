@@ -274,6 +274,13 @@ async function agregarMaterial() {
     }
 
     alert("Material guardado con código: " + codigo)
+        // Vaciar todos los campos
+document.getElementById("material").value = ""
+document.getElementById("rubro").value = ""
+document.getElementById("sub").value = ""
+document.getElementById("dimensional").value = ""
+document.getElementById("descripcion").value = ""
+ 
     cargarMateriales() // Recargar la tabla
 }
 
