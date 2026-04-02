@@ -134,7 +134,8 @@ function userLogin() {
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
         document.body.style.overflow = 'auto';
-        cargarMateriales();
+        document.body.classList.add('logged-in');  // ← ESTA LÍNEA AGREGA
+ cargarMateriales();
     } else { alert('Usuario o contrasena incorrecta'); }
 }
 
