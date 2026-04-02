@@ -96,9 +96,17 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
   const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+
+// Variable global para guardar todos los materiales
+let todosLosMateriales = [];
+  
   // ===== Función para cargar materiales desde Supabase =====
   async function cargarMateriales() {
-      const datalist = document.getElementById("materialesList");
+      if (!userAuthenticated) {
+        document.getElementById('loginScreen').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        return;}
+    const datalist = document.getElementById("materialesList");
       datalist.innerHTML = "";
 
       const { data: materiales, error } = await supabaseClient
@@ -111,12 +119,32 @@ input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin
           return;
       }
 
-      materiales.forEach(m => {
-          const opcion = document.createElement("option");
-          opcion.value = `${m.codigo} - ${m.material} - ${m.dimensional || ""}`;
-          datalist.appendChild(opcion);
-      });
-  }
+    // Guardar todos los materiales en variable global
+    todosLosMateriales = materiales;
+
+    // Mostrar todos inicialmente
+    actualizarSugerencias("");
+}
+
+// ===== Función para actualizar sugerencias según lo que se escribe =====
+function actualizarSugerencias(textoBusqueda) {
+    const datalist = document.getElementById("materialesList");
+    datalist.innerHTML = "";
+    
+    // Filtrar materiales por código o nombre
+    const filtrados = todosLosMateriales.filter(m => {
+        const busqueda = textoBusqueda.toLowerCase();
+        return m.codigo.toLowerCase().includes(busqueda) || 
+               m.material.toLowerCase().includes(busqueda);
+    });
+    
+    // Agregar opciones filtradas al datalist
+    filtrados.forEach(m => {
+        const opcion = document.createElement("option");
+        opcion.value = `${m.codigo} - ${m.material} - ${m.dimensional || ""}`;
+        datalist.appendChild(opcion);
+    });
+}
 
   // ===== Función para guardar movimiento =====
   async function guardar() {
