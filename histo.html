@@ -1,18 +1,65 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
 <style>
   body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
-    /* ✅ FONDO SIEMPRE VISIBLE */
     background-image: url('user2.png');
-    background-size: cover;        /* Cubre toda pantalla */
-    background-position: center;   /* Centrado */
-    background-repeat: no-repeat;  /* No repetir */
-    background-attachment: fixed;  /* Fijo al scroll */
-    min-height: 100vh;             /* Altura completa */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }  /* ← ESTA LLAVE FALTABA */
+
+  /* ===== ESTILOS TURQUESA PARA LA TABLA (como en admin.html) ===== */
+  #tablaMovimientos {
+    width: 95%;
+    margin: 25px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    background: white;
+  }
+
+  #tablaMovimientos th {
+    background: #26a69a;  /* TURQUESA */
+    color: white;
+    padding: 16px 12px;
+    font-weight: bold;
+    text-align: left;
+    border: none;
+  }
+
+  #tablaMovimientos td {
+    padding: 12px 12px;
+    border-bottom: 1px solid #e0f2f1;
+    border-left: none;
+    border-right: none;
+  }
+
+  #tablaMovimientos tr:hover {
+    background: #e1f5fe;
+  }
+
+  #tablaMovimientos tr {
+    background-color: #e0f2f1;
+  }
+
+  .btn-borrar {
+    background: #ff5252;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .btn-borrar:hover {
+    background: #ff1744;
+  }
 </style>
 <title>Administrador - historial</title>
 </head>
@@ -20,116 +67,91 @@
 <body>
 
 <!-- Logo Principal -->
- <div style="text-align:left; margin-bottom:20px;">
+<div style="text-align:left; margin-bottom:20px;">
   <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:400px; height:auto;">
 </div>
 
-  <div style="
-    display: flex;
-    justify-content: left; /* centra horizontalmente */
-   margin-bottom: 10px;
-  //align-items: flex-end;   /* alinea abajo del contenedor */
-    height: 5vh;           /* ocupa toda la altura de la ventana */
-">
+<div style="display: flex; justify-content: left; margin-bottom: 10px; height: 5vh;">
   <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:300px; width:100%; height:60px;">
 </div>
-    <h1 style="text-align: left;">Contacto: 1158297715</h1>
+
+<h1 style="text-align: left;">Contacto: 1158297715</h1>
 
 <hr>
 
 <h2>Historial de Movimientos</h2>
 
-<table border="1" id="tablaMovimientos">
-<tr>
-<th>Código</th>
-<th>Material</th>
-<th>Tipo</th>
-<th>Cantidad</th>
-<th>Responsable</th>
-<th>Cliente / Proveedor</th>
-<th>Fecha / Hora</th>
-<th>Acción</th>
-</tr>
+<table id="tablaMovimientos">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Material</th>
+      <th>Tipo</th>
+      <th>Cantidad</th>
+      <th>Responsable</th>
+      <th>Cliente / Proveedor</th>
+      <th>Fecha / Hora</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
 </table>
 
 <hr>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function cargarHistorial() {
-
-    const tabla = document.getElementById("tablaMovimientos")
-
-    tabla.innerHTML = `
-    <tr>
-        <th>Código</th>
-        <th>Material</th>
-        <th>Tipo</th>
-        <th>Cantidad</th>
-        <th>Responsable</th>
-        <th>Cliente / Proveedor</th>
-        <th>Fecha / Hora</th>
-        <th>Acción</th>
-    </tr>
-    `
+    const tbody = document.querySelector("#tablaMovimientos tbody");
+    tbody.innerHTML = "";
 
     const { data, error } = await supabaseClient
         .from("movimientos")
         .select("*")
-        .order("fecha", { ascending: false })
+        .order("fecha", { ascending: false });
 
     if (error) {
-        console.error("Error cargando historial:", error)
-        return
+        console.error("Error cargando historial:", error);
+        return;
     }
 
     data.forEach(m => {
-
-        let fila = document.createElement("tr")
-
+        let fila = document.createElement("tr");
         fila.innerHTML = `
-        <td>${m.codigo}</td>
-        <td>${m.materiales || ""}</td>
-        <td>${m.tipo}</td>
-        <td>${m.cantidad}</td>
-        <td>${m.responsable}</td>
-        <td>${m.cliente || ""}</td>
-        <td>${new Date(m.fecha).toLocaleString()}</td>
-        <td><button onclick="borrarMovimiento(${m.id})">Borrar</button></td>
-        `
-
-        tabla.appendChild(fila)
-
-    })
-
+            <td>${m.codigo}</td>
+            <td>${m.material || ""}</td>
+            <td>${m.tipo}</td>
+            <td>${m.cantidad}</td>
+            <td>${m.responsable}</td>
+            <td>${m.cliente || ""}</td>
+            <td>${new Date(m.fecha).toLocaleString()}</td>
+            <td><button class="btn-borrar" onclick="borrarMovimiento(${m.id})">Borrar</button></td>
+        `;
+        tbody.appendChild(fila);
+    });
 }
 
 async function borrarMovimiento(id) {
-
-    if (!confirm("¿Desea borrar este movimiento?")) return
+    if (!confirm("¿Desea borrar este movimiento?")) return;
 
     const { error } = await supabaseClient
         .from("movimientos")
         .delete()
-        .eq("id", id)
+        .eq("id", id);
 
     if (error) {
-        alert("Error al borrar")
-        console.error(error)
+        alert("Error al borrar: " + error.message);
+        console.error(error);
     } else {
-        cargarHistorial()
+        cargarHistorial();
     }
-
 }
 
-cargarHistorial()
-
+cargarHistorial();
 </script>
 
 </body>
