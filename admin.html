@@ -277,22 +277,22 @@ async function agregarMaterial() {
     cargarMateriales() // Recargar la tabla
 }
 
-async function borrarMaterial(id) {
-    if (!confirm("¿Desea borrar este material?")) return;
+async function borrarMaterial(codigo) {
+    if (!confirm("¿Desea borrar el material con código: " + codigo + "?")) return;
     
     const { error } = await supabaseClient
         .from("altas")
         .delete()
-        .eq("id", id);
+        .eq("codigo", codigo);
     
     if (error) {
-        alert("Error al borrar");
+        alert("Error al borrar: " + error.message);
         console.error(error);
     } else {
+        alert("Material eliminado correctamente");
         cargarMateriales(); // recarga la tabla al instante
     }
 }
-
  
 async function cargarMateriales() {
     if (!userAuthenticated) return;
@@ -341,7 +341,7 @@ async function cargarMateriales() {
             <td>${m.sub || ''}</td>
             <td>${m.dimensional || ''}</td>
             <td>${m.descripcion || ''}</td>
-            <td><button onclick="borrarMaterial(${m.id})">Borrar</button></td>
+            <td><button onclick="borrarMaterial('${m.codigo}')">Borrar</button></td>
         `;
         tbody.appendChild(fila);
     });
