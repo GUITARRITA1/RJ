@@ -332,7 +332,7 @@ async function cargarMateriales() {
             <td>${m.sub || ''}</td>
             <td>${m.dimensional || ''}</td>
             <td>${m.descripcion || ''}</td>
-            <td><button onclick="borrarMaterial('${m.id}')">🗑️ Borrar</button></td>
+            <td><button onclick="borrarMaterial('${m.codigo}')">🗑️ Borrar</button></td>
 
         `
         tbody.appendChild(fila)
