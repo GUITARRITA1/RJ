@@ -33,7 +33,7 @@ body.logged-in label {
     font-weight: bold;
     margin-top: 15px;
     width: fit-content;      /* ← opcional: ajusta al contenido */
-}
+    text-align: center;}
 
 /* Para el título h2 después del login */
 body.logged-in h2 {
@@ -52,6 +52,12 @@ body.logged-in h1 {
     padding: 8px 16px;
     border-radius: 8px;
     display: block;
+}
+    /* Forzar que el botón Guardar esté debajo de los inputs */
+body.logged-in button#guardarBtn {
+    display: block;
+    margin-top: 20px;
+    width: 250px;
 }
 </style>
 </head>
