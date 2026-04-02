@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 <meta charset="UTF-8">
 <title>Movimiento de Material</title>
@@ -26,7 +25,6 @@ body.logged-in {
 }
 </style>
 </head>
-
 <body>
 
 <div id="loginScreen" class="login-screen">
@@ -41,17 +39,13 @@ body.logged-in {
 </div>
 
 <div class="content-hidden" style="text-align:center; margin-bottom:20px;">
- 
     <div style="text-align:center; margin-bottom:20px;">
         <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
     </div>
-
     <div style="display: flex; justify-content: center; margin-bottom: 5px; height: 5vh;">
         <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:500px; width:100%; height:100px;">
     </div>
-    
     <h1 style="text-align: center;">Contacto: 1158297715</h1>
-
     <h2>Entrada / Salida de Material</h2>
 
     <label>Material:</label>
@@ -77,39 +71,22 @@ body.logged-in {
     <input id="detalles" placeholder="Ej: Dimensiones, color, notas">
 
     <button id="guardarBtn">Guardar</button>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ===== Inicializar Supabase =====
 const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
 let userAuthenticated = false;
 
-// ===== Función para cargar materiales desde Supabase =====
 async function cargarMateriales() {
-    if (!userAuthenticated) {
-        return;
-    }
-    
+    if (!userAuthenticated) return;
     const datalist = document.getElementById("materialesList");
     if (!datalist) return;
-    
     datalist.innerHTML = "";
-
-    const { data: materiales, error } = await supabaseClient
-        .from("altas")
-        .select("*")
-        .order("codigo");
-
-    if(error){
-        console.error("Error cargando altas:", error);
-        return;
-    }
-
+    const { data: materiales, error } = await supabaseClient.from("altas").select("*").order("codigo");
+    if(error){ console.error("Error:", error); return; }
     materiales.forEach(m => {
         const opcion = document.createElement("option");
         opcion.value = `${m.codigo} - ${m.material} - ${m.dimensional || ""}`;
@@ -117,64 +94,29 @@ async function cargarMateriales() {
     });
 }
 
-// ===== Función para guardar movimiento =====
 async function guardar() {
-    if (!userAuthenticated) {
-        alert('❌ Debes iniciar sesión');
-        return;
-    }
-    
+    if (!userAuthenticated) { alert('Debes iniciar sesion'); return; }
     const input = document.getElementById("codigo").value;
     const partes = input.split(" - ");
     const codigo = partes[0];
     const materialNombre = partes[1];
-
     const tipo = document.getElementById("tipo").value;
-    const cantidadInput = document.getElementById("cantidad").value;
-    const cantidad = parseInt(cantidadInput);
+    const cantidad = parseInt(document.getElementById("cantidad").value);
     const responsable = document.getElementById("responsable").value;
     const cliente = document.getElementById("cliente").value;
     const detalles = document.getElementById("detalles").value;
-
-    if (!codigo || !materialNombre) { 
-        alert("Selecciona un material válido de la lista"); 
-        return; 
-    }
-    if (!tipo) { 
-        alert("Selecciona un tipo"); 
-        return; 
-    }
-    if (!cantidadInput || isNaN(cantidad) || cantidad <= 0) { 
-        alert("Cantidad inválida"); 
-        return; 
-    }
-    if (!responsable) { 
-        alert("Ingresa el responsable"); 
-        return; 
-    }
-    if (!cliente) { 
-        alert("Ingresa el cliente/proveedor"); 
-        return; 
-    }
-
-    const { data, error } = await supabaseClient
-        .from("movimientos")
-        .insert([{
-            codigo: codigo,
-            material: materialNombre,
-            tipo: tipo,
-            cantidad: cantidad,
-            responsable: responsable,
-            cliente: cliente,
-            detalles: detalles,
-            fecha: new Date().toISOString()
-        }]);
-
-    if (error) {
-        console.error("Error al guardar:", error);
-        alert("Error al guardar: " + error.message);
-    } else {
-        alert("Movimiento guardado correctamente");
+    if (!codigo || !materialNombre) { alert("Selecciona un material valido"); return; }
+    if (!tipo) { alert("Selecciona un tipo"); return; }
+    if (!cantidad || cantidad <= 0) { alert("Cantidad invalida"); return; }
+    if (!responsable) { alert("Ingresa el responsable"); return; }
+    if (!cliente) { alert("Ingresa el cliente/proveedor"); return; }
+    const { error } = await supabaseClient.from("movimientos").insert([{
+        codigo, material: materialNombre, tipo, cantidad, responsable, cliente, detalles,
+        fecha: new Date().toISOString()
+    }]);
+    if (error) { alert("Error: " + error.message); } 
+    else {
+        alert("Movimiento guardado");
         document.getElementById("codigo").value = "";
         document.getElementById("tipo").value = "entrada";
         document.getElementById("cantidad").value = "";
@@ -184,37 +126,26 @@ async function guardar() {
     }
 }
 
-// ===== LOGIN =====
 function userLogin() {
     const username = document.getElementById('loginUser').value;
     const password = document.getElementById('loginPass').value;
-    
     if (username === 'tecnico1' && password === 'tecni001') {
         userAuthenticated = true;
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
         document.body.style.overflow = 'auto';
-        document.body.classList.add('logged-in');
         cargarMateriales();
-    } else {
-        alert('❌ Usuario o contraseña incorrecta');
-    }
+    } else { alert('Usuario o contrasena incorrecta'); }
 }
 
-// ===== EVENTOS =====
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('loginScreen').style.display = 'block';
     document.body.style.overflow = 'hidden';
 });
-
 document.getElementById("guardarBtn").addEventListener("click", guardar);
-
 document.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !userAuthenticated) {
-        userLogin();
-    }
+    if (e.key === 'Enter' && !userAuthenticated) userLogin();
 });
 </script>
-
 </body>
 </html>
