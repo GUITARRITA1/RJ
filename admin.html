@@ -312,8 +312,14 @@ async function cargarMateriales() {
         `
         tbody.appendChild(fila)
     })
+
+ fila.innerHTML = `
+    <td>${m.codigo}</td>
+
 }
 
+
+     
 // ================== LOGIN ==================
 let userAuthenticated = false;
 
