@@ -120,7 +120,9 @@ const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let userAuthenticated = false;
-
+let userAuthenticated = false;
+let puedeGuardar =false;
+    
 async function cargarMateriales() {
     if (!userAuthenticated) return;
     const datalist = document.getElementById("materialesList");
@@ -172,12 +174,24 @@ function userLogin() {
     const password = document.getElementById('loginPass').value;
     if (username === 'tecnico1' && password === 'tecni001') {
         userAuthenticated = true;
+        puedeGuardar = true;  // ← Este usuario puede guardar
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
         document.body.style.overflow = 'auto';
         document.body.classList.add('logged-in');  // ← ESTA LÍNEA AGREGA
  cargarMateriales();
-    } else { alert('Usuario o contrasena incorrecta'); }
+                configurarBotonGuardar();  // ← llamar nueva función
+ else if (username === 'visualizador' && password === 'ver001') {
+        userAuthenticated = true;
+        puedeGuardar = false;  // ← Este usuario NO puede guardar
+        document.getElementById('loginScreen').style.display = 'none';
+        document.querySelector('.content-hidden').classList.remove('content-hidden');
+        document.body.style.overflow = 'auto';
+        document.body.classList.add('logged-in');
+        cargarMateriales();
+        configurarBotonGuardar();  // ← llamar nueva función
+    } 
+    else { alert('Usuario o contrasena incorrecta'); }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -188,6 +202,19 @@ document.getElementById("guardarBtn").addEventListener("click", guardar);
 document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter' && !userAuthenticated) userLogin();
 });
+    function configurarBotonGuardar() {
+    const boton = document.getElementById("guardarBtn");
+    if (!puedeGuardar) {
+        boton.disabled = true;
+        boton.style.background = "#ccc";
+        boton.style.cursor = "not-allowed";
+        boton.title = "Modo solo visualización - No puedes guardar";
+    } else {
+        boton.disabled = false;
+        boton.style.background = "#26a69a";
+        boton.style.cursor = "pointer";
+    }
+}
 </script>
 </body>
 </html>
