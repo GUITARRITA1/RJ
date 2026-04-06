@@ -175,6 +175,7 @@ function userLogin() {
         document.getElementById('loginScreen').style.display = 'none';
         document.querySelector('.content-hidden').classList.remove('content-hidden');
         document.body.style.overflow = 'auto';
+        document.body.classList.add('logged-in');  // ← ESTA LÍNEA FALTABA
  cargarMateriales();
     } 
     else { alert('Usuario o contrasena incorrecta'); }
@@ -188,19 +189,7 @@ document.getElementById("guardarBtn").addEventListener("click", guardar);
 document.addEventListener('keypress', function(e) {
     if (e.key === 'Enter' && !userAuthenticated) userLogin();
 });
-    function configurarBotonGuardar() {
-    const boton = document.getElementById("guardarBtn");
-    if (!puedeGuardar) {
-        boton.disabled = true;
-        boton.style.background = "#ccc";
-        boton.style.cursor = "not-allowed";
-        boton.title = "Modo solo visualización - No puedes guardar";
-    } else {
-        boton.disabled = false;
-        boton.style.background = "#26a69a";
-        boton.style.cursor = "pointer";
-    }
-}
+    
 </script>
 </body>
 </html>
