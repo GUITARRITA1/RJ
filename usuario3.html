@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Movimiento de Material</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; }
+input, select, button { margin: 5px 0; padding: 5px; width: 250px; }
+label { display: block; margin-top: 10px; }
+
+.login-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; }
+.login-box { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+input[type="text"], input[type="password"] { width: 250px; padding: 12px; margin: 10px 0; }
+.login-btn { background: #2196f3; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+.login-btn:hover { background: #1976d2; }
+.content-hidden { display: none; }
+
+body.logged-in {
+    background-image: url('fondou.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+    /* Resaltado para etiquetas después del login */
+body.logged-in label {
+    background: rgba(38, 166, 154, 0.85);  /* Turquesa semitransparente */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    width: fit-content;      /* ← opcional: ajusta al contenido */
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;}
+
+/* Para el título h2 después del login */
+body.logged-in h2 {
+    background: rgba(38, 166, 154, 0.85);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+/* Opcional: para el texto del encabezado h1 */
+body.logged-in h1 {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: block;
+}
+    /* Forzar que el botón Guardar esté debajo de los inputs */
+body.logged-in button#guardarBtn {
+    display: block;
+    margin-top: 20px;
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <h2 style="text-align: center; color: #2196f3;">👤 Módulo Usuario</h2>
+        <p style="text-align: center; color: #666;">Refrigeración TRUCK - by CoAtom</p>
+        <input type="text" id="loginUser" placeholder="Usuario">
+        <input type="password" id="loginPass" placeholder="Contraseña">
+        <br>
+        <button class="login-btn" onclick="userLogin()">Acceder</button>
+    </div>
+</div>
+
+<div class="content-hidden" style="text-align:center; margin-bottom:20px;">
+    <div style="text-align:center; margin-bottom:20px;">
+        <img src="RJ.jpg" alt="REFRIGERACION JULIO" style="max-width:800px; height:auto;">
+    </div>
+    <div style="display: flex; justify-content: center; margin-bottom: 5px; height: 5vh;">
+        <img src="INGE.jpg" alt="REFRIGERACION JULIO" style="max-width:500px; width:100%; height:100px;">
+    </div>
+    <br><br>
+    <h1 style="text-align: center;">Contacto: 1158297715</h1>
+    <h2>Entrada / Salida de Material</h2>
+
+    <label>Material:</label>
+    <input list="materialesList" id="codigo" placeholder="Escribe para buscar material">
+    <datalist id="materialesList"></datalist>
+
+    <label>Tipo:</label>
+    <select id="tipo">
+        <option value="entrada">Entrada</option>
+        <option value="salida">Salida</option>
+    </select>
+
+    <label>Cantidad:</label>
+    <input type="number" id="cantidad">
+
+    <label>Responsable:</label>
+    <input id="responsable">
+
+    <label>Cliente / Proveedor:</label>
+    <input id="cliente">
+
+    <label>Detalles adicionales:</label>
+    <input id="detalles" placeholder="Ej: Dimensiones, color, notas">
+
+    <button id="guardarBtn">Guardar</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const supabaseUrl = "https://vlvfbckdqemjghphefnx.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsdmZiY2tkcWVtamdocGhlZm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTkzNDAsImV4cCI6MjA4ODc3NTM0MH0.DnxTRvkoH2mc0rQBc_M29e2dMGS610MDHcMMtOKHIVM";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+let userAuthenticated = false;
+    
+async function cargarMateriales() {
+    if (!userAuthenticated) return;
+    const datalist = document.getElementById("materialesList");
+    if (!datalist) return;
+    datalist.innerHTML = "";
+    const { data: materiales, error } = await supabaseClient.from("altas").select("*").order("codigo");
+    if(error){ console.error("Error:", error); return; }
+    materiales.forEach(m => {
+        const opcion = document.createElement("option");
+        opcion.value = `${m.codigo} - ${m.material} - ${m.dimensional || ""}`;
+        datalist.appendChild(opcion);
+    });
+}
+
+async function guardar() {
+    if (!userAuthenticated) { alert('Debes iniciar sesion'); return; }
+    const input = document.getElementById("codigo").value;
+    const partes = input.split(" - ");
+    const codigo = partes[0];
+    const materialNombre = partes[1];
+    const tipo = document.getElementById("tipo").value;
+    const cantidad = parseInt(document.getElementById("cantidad").value);
+    const responsable = document.getElementById("responsable").value;
+    const cliente = document.getElementById("cliente").value;
+    const detalles = document.getElementById("detalles").value;
+    if (!codigo || !materialNombre) { alert("Selecciona un material valido"); return; }
+    if (!tipo) { alert("Selecciona un tipo"); return; }
+    if (!cantidad || cantidad <= 0) { alert("Cantidad invalida"); return; }
+    if (!responsable) { alert("Ingresa el responsable"); return; }
+    if (!cliente) { alert("Ingresa el cliente/proveedor"); return; }
+    const { error } = await supabaseClient.from("movimientos").insert([{
+        codigo, material: materialNombre, tipo, cantidad, responsable, cliente, detalles,
+        fecha: new Date().toISOString()
+    }]);
+    if (error) { alert("Error: " + error.message); } 
+    else {
+        alert("Movimiento guardado");
+        document.getElementById("codigo").value = "";
+        document.getElementById("tipo").value = "entrada";
+        document.getElementById("cantidad").value = "";
+        document.getElementById("responsable").value = "";
+        document.getElementById("cliente").value = "";
+        document.getElementById("detalles").value = "";
+    }
+}
+
+function userLogin() {
+    const username = document.getElementById('loginUser').value;
+    const password = document.getElementById('loginPass').value;
+    if (username === 'tecnico1' && password === 'tecni001') {
+        userAuthenticated = true;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.querySelector('.content-hidden').classList.remove('content-hidden');
+        document.body.style.overflow = 'auto';
+ cargarMateriales();
+    } 
+    else { alert('Usuario o contrasena incorrecta'); }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+});
+document.getElementById("guardarBtn").addEventListener("click", guardar);
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !userAuthenticated) userLogin();
+});
+    function configurarBotonGuardar() {
+    const boton = document.getElementById("guardarBtn");
+    if (!puedeGuardar) {
+        boton.disabled = true;
+        boton.style.background = "#ccc";
+        boton.style.cursor = "not-allowed";
+        boton.title = "Modo solo visualización - No puedes guardar";
+    } else {
+        boton.disabled = false;
+        boton.style.background = "#26a69a";
+        boton.style.cursor = "pointer";
+    }
+}
+</script>
+</body>
+</html>
